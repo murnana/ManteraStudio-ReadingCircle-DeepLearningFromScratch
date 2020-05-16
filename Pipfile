@@ -8,6 +8,7 @@ jupyterlab = "*"
 sphinx = "*"
 nbsphinx = "*"
 nbconvert = "*"
+sphinx-rtd-theme = "*"
 
 [packages]
 
