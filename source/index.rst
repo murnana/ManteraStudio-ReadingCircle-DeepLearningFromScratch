@@ -10,6 +10,8 @@ Welcome to Mantera Studio Reading Circle - Deep Learning from Scratch's document
    :maxdepth: 2
    :caption: Contents:
 
+   ./sample-ipython
+
 
 
 Indices and tables
