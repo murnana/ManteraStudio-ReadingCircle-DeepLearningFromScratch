@@ -4,13 +4,15 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-jupyterlab = "*"
 sphinx = "*"
 nbsphinx = "*"
 nbconvert = "*"
 sphinx-rtd-theme = "*"
 
 [packages]
+numpy = "*"
+matplotlib = "*"
+jupyterlab = "*"
 
 [requires]
 python_version = "3.8"
