@@ -23,7 +23,7 @@ pip install pipenv
 
 pipenvで必要なパッケージをインストールします:
 ```
-pipenv install
+pipenv install --dev
 ```
 
 その後、Sphinxによるビルドを実行します:
@@ -44,17 +44,9 @@ jupyter lab
 * [Jupyter Notebook Tools for Sphinx](https://nbsphinx.readthedocs.io/en/0.7.0/) - Jupyter Notebookで生成した`*.ipynb`を、Sphinxでビルドするための拡張機能
 * [Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/) - ブラウザで動作する、ドキュメントを共有するためのツール
 
-## 貢献する
-
-行動規範の詳細、およびプルリクエストを提出する手順については [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) をお読みください。
-
-## バージョン管理
-
-バージョン管理には [SemVer](http://semver.org/) を使用します。利用可能なバージョンについては、このリポジトリのタグ [tags on this repository](https://github.com/your/project/tags)を参照してください。 
-
 ## 作成者
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **murnana** - *ゲームクライアントプログラマ* - [GitHub](https://github.com/murnana)
 
 このプロジェクトに参加した [contributors](https://github.com/your/project/contributors) のリストもご覧ください。
 
@@ -64,7 +56,7 @@ jupyter lab
 
 ## 謝辞
 
-* コードを使用した人
-* インスピレーション
-* 等々
-
+* [ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装](https://www.oreilly.co.jp/books/9784873117584/) - 輪読会で使用した本
+* [reading-zero-deep] (https://github.com/Manntera-Studio/reading-zero-deep) - まんてらスタジオの勉強会リポジトリ
+* [まんてら](https://github.com/orange634nty)さん - まんてらスタジオ代表。この場所がなければ何も始まらなかった。
+* [むさし](https://github.com/orange634nty)さん - 今回の輪読会で主体で動いてくれた方。
