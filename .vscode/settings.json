@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.env.windows": {
+        "PIPENV_VENV_IN_PROJECT": "${workspaceFolder}\\.venv",
+        "WORKON_HOME": "${workspaceFolder}\\.venv",
+        "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH};",
+    },
+}
