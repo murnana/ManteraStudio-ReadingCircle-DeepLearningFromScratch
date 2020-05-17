@@ -3,15 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Mantera Studio Reading Circle - Deep Learning from Scratch's documentation!
-======================================================================================
+ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 勉強ノートへようこそ！
+======================================================================================================
+
+
+まんてらスタジオで行われた輪読会の、murnanaによるまとめです。
+
+
+
+輪読会で使用する本
+===================
+
+* `ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 <https://www.oreilly.co.jp/books/9784873117584/>`_ - 輪読会で使用した本
+
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    ./Intro/intro-index
-
 
 
 Indices and tables

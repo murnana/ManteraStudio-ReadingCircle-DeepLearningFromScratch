@@ -50,10 +50,6 @@ jupyter lab
 
 このプロジェクトに参加した [contributors](https://github.com/your/project/contributors) のリストもご覧ください。
 
-## ライセンス
-
-このプロジェクトは、MITライセンスの下でライセンスされています - 詳細は [LICENSE.md](LICENSE.md) ファイルをご覧ください。
-
 ## 謝辞
 
 * [ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装](https://www.oreilly.co.jp/books/9784873117584/) - 輪読会で使用した本

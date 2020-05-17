@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Mantera Studio Reading Circle - Deep Learning from Scratch'
+project = 'まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装'
 copyright = '2020, murnana'
 author = 'murnana'
 
