@@ -21,8 +21,10 @@
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :glob:
+   :numbered:
 
-   ./Intro/intro-index
+   ./**/index
 
 
 Indices and tables

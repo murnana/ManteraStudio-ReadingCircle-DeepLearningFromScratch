@@ -4,4 +4,5 @@
         "WORKON_HOME": "${workspaceFolder}\\.venv",
         "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH};",
     },
+    "python.pythonPath": "C:\\Users\\anzuy\\Project\\ManteraStudio-ReadingCircle-DeepLearningFromScratch\\.venv\\Scripts\\python.exe",
 }

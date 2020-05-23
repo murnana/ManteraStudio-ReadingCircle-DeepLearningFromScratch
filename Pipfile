@@ -5,14 +5,17 @@ verify_ssl = true
 
 [dev-packages]
 sphinx = "*"
-nbsphinx = "*"
 nbconvert = "*"
 sphinx-rtd-theme = "*"
+pandoc = "*"
+pylint = "*"
+autopep8 = "*"
 
 [packages]
 numpy = "*"
 matplotlib = "*"
 jupyterlab = "*"
+nbsphinx = "*"
 
 [requires]
 python_version = "3.8"
