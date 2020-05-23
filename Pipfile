@@ -8,6 +8,8 @@ sphinx = "*"
 nbconvert = "*"
 sphinx-rtd-theme = "*"
 pandoc = "*"
+pylint = "*"
+autopep8 = "*"
 
 [packages]
 numpy = "*"
