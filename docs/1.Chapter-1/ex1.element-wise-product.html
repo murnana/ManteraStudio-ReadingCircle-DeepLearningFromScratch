@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>はじめに &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  <title>2.6. 「要素ごとの積 (element-wise product)」とは &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
   
 
   
@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="検索" href="../search.html" />
-    <link rel="prev" title="ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 勉強ノートへようこそ！" href="../index.html" /> 
+    <link rel="prev" title="2.5. Matplotlib" href="6.matplotlib.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,10 +83,19 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">はじめに</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#なぜJupyterLab?">なぜJupyterLab?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#なぜSphinx?">なぜSphinx?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Jupyterで作成し、Sphinxでビルドするとどんな感じ？">Jupyterで作成し、Sphinxでビルドするとどんな感じ？</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. 1章 Python入門</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.python-setup.html">2.1. Python環境のセットアップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.python-interpreter.html">2.2. Pythonインタプリタ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.python-script-file.html">2.3. Pythonスクリプトファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.numpy.html">2.4. NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.matplotlib.html">2.5. Matplotlib</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.6. 「要素ごとの積 (element-wise product)」とは</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#🤔「行列の積」っていろいろあるの？">2.6.1. 🤔「行列の積」っていろいろあるの？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#🤔3DCGで使用されている、行列の積はなに？">2.6.2. 🤔3DCGで使用されている、行列の積はなに？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#🤔NumPyではなぜ、「要素ごとの積」を乗算の標準としたのか">2.6.3. 🤔NumPyではなぜ、「要素ごとの積」を乗算の標準としたのか</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -134,13 +143,15 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>はじめに</li>
+          <li><a href="index.html"><span class="section-number">2. </span>1章 Python入門</a> &raquo;</li>
+        
+      <li><span class="section-number">2.6. </span>「要素ごとの積 (element-wise product)」とは</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/Intro/intro-index.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/1.Chapter-1/ex1.element-wise-product.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -408,64 +419,78 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="はじめに">
-<h1>はじめに<a class="headerlink" href="#はじめに" title="このヘッドラインへのパーマリンク">¶</a></h1>
-<p>このドキュメントは JupyterLab で作成・編集し、Sphinxでビルドしました</p>
-<div class="section" id="なぜJupyterLab?">
-<h2>なぜJupyterLab?<a class="headerlink" href="#なぜJupyterLab?" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<ul class="simple">
-<li><p>輪読会で使用している本「<a class="reference external" href="https://www.oreilly.co.jp/books/9784873117584/">ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>」にあるコードと、実行結果をまとめるのにちょうどいい環境がJupyterにそろっている</p></li>
-<li><p>Jupyterでは、書いたコードと実行結果を並べて表示できる</p></li>
-<li><p>何なら、Markdownも一緒に書ける</p></li>
-</ul>
+<div class="section" id="「要素ごとの積-(element-wise-product)」とは">
+<h1><span class="section-number">2.6. </span>「要素ごとの積 (element-wise product)」とは<a class="headerlink" href="#「要素ごとの積-(element-wise-product)」とは" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><p>数学におけるアダマール積（英: Hadamard product）は、同じサイズの行列に対して成分ごとに積を取ることによって定まる行列の積である。要素ごとの積（英: element-wise product）、シューア積（英: Schur product）、点ごとの積（英: pointwise product）、成分ごとの積（英: entrywise product）などとも呼ばれる。 <a class="reference external" href="https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%80%E3%83%9E%E3%83%BC%E3%83%AB%E7%A9%8D">アダマール積 - Wikipedia</a></p>
+</div></blockquote>
+<div class="section" id="🤔「行列の積」っていろいろあるの？">
+<h2><span class="section-number">2.6.1. </span>🤔「行列の積」っていろいろあるの？<a class="headerlink" href="#🤔「行列の積」っていろいろあるの？" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>💡いろいろあります！ <a class="reference external" href="https://ja.wikipedia.org/wiki/%E8%A1%8C%E5%88%97%E3%81%AE%E4%B9%97%E6%B3%95">行列の乗法 - Wikipedia</a></p>
 </div>
-<div class="section" id="なぜSphinx?">
-<h2>なぜSphinx?<a class="headerlink" href="#なぜSphinx?" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<ul class="simple">
-<li><p>Jupyterで生成したものを静的にビルドできる</p></li>
-<li><p>後からLaTexを入れるなど、拡張が可能</p></li>
-</ul>
+<div class="section" id="🤔3DCGで使用されている、行列の積はなに？">
+<h2><span class="section-number">2.6.2. </span>🤔3DCGで使用されている、行列の積はなに？<a class="headerlink" href="#🤔3DCGで使用されている、行列の積はなに？" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>💡行列の内積 (行列をベクトルと扱うときの、内積)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
 </div>
-<div class="section" id="Jupyterで作成し、Sphinxでビルドするとどんな感じ？">
-<h2>Jupyterで作成し、Sphinxでビルドするとどんな感じ？<a class="headerlink" href="#Jupyterで作成し、Sphinxでビルドするとどんな感じ？" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="c1"># 現在地の座標を (x, y) = (0, 0) とする</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># そこから、x = 2, y = 3 に移動する</span>
+<span class="n">movePos</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># 要素ごとの積</span>
+<span class="n">pos</span> <span class="o">*</span> <span class="n">movePos</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 0.],
+       [0., 0., 0., 1.]])
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;こんな感じ&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># 行列の内積</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">movePos</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-こんな感じ
+array([2., 3., 0., 1.])
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;なんならエラーも出る)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-<span class="ansi-cyan-intense-fg ansi-bold">  File </span><span class="ansi-green-intense-fg ansi-bold">&#34;&lt;ipython-input-4-ea2f49f7cd28&gt;&#34;</span><span class="ansi-cyan-intense-fg ansi-bold">, line </span><span class="ansi-green-intense-fg ansi-bold">1</span>
-<span class="ansi-yellow-intense-fg ansi-bold">    print(&#34;なんならエラーも出る)</span>
-<span class="ansi-white-intense-fg ansi-bold">                      ^</span>
-<span class="ansi-red-intense-fg ansi-bold">SyntaxError</span><span class="ansi-red-intense-fg ansi-bold">:</span> EOL while scanning string literal
-
-</pre></div></div>
-</div>
+<div class="section" id="🤔NumPyではなぜ、「要素ごとの積」を乗算の標準としたのか">
+<h2><span class="section-number">2.6.3. </span>🤔NumPyではなぜ、「要素ごとの積」を乗算の標準としたのか<a class="headerlink" href="#🤔NumPyではなぜ、「要素ごとの積」を乗算の標準としたのか" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>TODO: きっとNumPyの仕様書か、ディスカッションでも見ないと見つからない疑問</p>
 </div>
 </div>
 
@@ -478,7 +503,7 @@ div.rendered_html tbody tr:hover {
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="../index.html" class="btn btn-neutral float-left" title="ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 勉強ノートへようこそ！" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="6.matplotlib.html" class="btn btn-neutral float-left" title="2.5. Matplotlib" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
