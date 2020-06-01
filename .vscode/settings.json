@@ -2,7 +2,7 @@
     "terminal.integrated.env.windows": {
         "PIPENV_VENV_IN_PROJECT": "${workspaceFolder}\\.venv",
         "WORKON_HOME": "${workspaceFolder}\\.venv",
-        "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH};",
+        "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH};"
     },
-    "python.pythonPath": "C:\\Users\\anzuy\\Project\\ManteraStudio-ReadingCircle-DeepLearningFromScratch\\.venv\\Scripts\\python.exe",
+    "restructuredtext.confPath": "${workspaceFolder}\\source"
 }

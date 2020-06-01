@@ -6,8 +6,10 @@
         {
             "label": "Launch Jupyter Lab",
             "type": "shell",
-            "command": "jupyter",
+            "command": "pipenv",
             "args": [
+                "run",
+                "jupyter",
                 "lab"
             ],
             "isBackground": true,
@@ -24,14 +26,26 @@
         {
             "label": "Build Sphinx docs",
             "type": "shell",
-            "command": "make",
+            "command": "pipenv",
             "args": [
+                "run",
+                "make",
                 "html"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
+            "isBackground": false,
+            "problemMatcher": []
+        },
+        {
+            "label": "pipenv sync",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "sync"
+            ],
             "isBackground": false,
             "problemMatcher": []
         }
