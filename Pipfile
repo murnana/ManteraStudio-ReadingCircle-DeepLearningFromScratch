@@ -4,18 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-sphinx = "*"
-nbconvert = "*"
-sphinx-rtd-theme = "*"
-pandoc = "*"
-pylint = "*"
-autopep8 = "*"
 
 [packages]
 numpy = "*"
 matplotlib = "*"
 jupyterlab = "*"
 nbsphinx = "*"
+sphinx = "*"
+nbconvert = "*"
+sphinx-rtd-theme = "*"
+pandoc = "*"
+pylint = "*"
+autopep8 = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"
