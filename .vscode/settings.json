@@ -4,5 +4,6 @@
         "WORKON_HOME": "${workspaceFolder}\\.venv",
         "PATH": "${workspaceFolder}/.venv/Scripts;${env:PATH};"
     },
-    "restructuredtext.confPath": "${workspaceFolder}\\source"
+    "restructuredtext.confPath": "${workspaceFolder}\\source",
+    "python.pythonPath": ".venv\\Scripts\\python.exe"
 }
