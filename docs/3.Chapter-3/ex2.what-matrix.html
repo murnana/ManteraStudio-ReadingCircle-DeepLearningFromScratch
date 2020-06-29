@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.8. 🤔行列とは &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="4.9. シグモイド関数" href="ex3.雑談.html" />
+    <link rel="prev" title="4.7. 🤔\(\exp(-x)\) と \(\mathrm{e}^{-x}\) って" href="ex1.what-exp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. 3章 ニューラルネットワーク</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1.perceptron-to-neural-network.html">4.1. パーセプトロンからニューラルネットワークへ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.activation-function.html">4.2. 活性化関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.multidimensional-array.html">4.3. 多次元配列の計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.3-layer-NN.html">4.4. 3層ニューラルネットワークの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.output-layer.html">4.5. 出力層の設計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.MNIST.html">4.6. 手書き数字認識</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex1.what-exp.html">4.7. 🤔<span class="math notranslate nohighlight">\(\exp(-x)\)</span> と <span class="math notranslate nohighlight">\(\mathrm{e}^{-x}\)</span> って</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. 🤔行列とは</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#どっちが行で、どっちが列なのさ">4.8.1. どっちが行で、どっちが列なのさ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#m-\times-n-行列">4.8.2. <span class="math notranslate nohighlight">\(m \times n\)</span> 行列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#乗算">4.8.3. 乗算</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#スカラー倍">4.8.3.1. スカラー倍</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#行列同士">4.8.3.2. 行列同士</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#加算・減算">4.8.4. 加算・減算</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html">4.9. シグモイド関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html#なめらかとは">4.10. なめらかとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex4.what-mapping-map.html">4.11. 写像とは</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">4. </span>3章 ニューラルネットワーク</a> &raquo;</li>
+        
+      <li><span class="section-number">4.8. </span>🤔行列とは</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/3.Chapter-3/ex2.what-matrix.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="🤔行列とは">
+<h1><span class="section-number">4.8. </span>🤔行列とは<a class="headerlink" href="#🤔行列とは" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>3DCGでもさんざんお世話になっているので、復習</p>
+<blockquote>
+<div><p>数学の線型代数学周辺分野における行列（ぎょうれつ、英: matrix）は、数や記号や式などを縦と横に矩形状に配列したものである。横に並んだ一筋を行、縦に並んだ一筋を列と呼ぶ。例えば、下記のような行列</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix}1&amp;9&amp;-13\\20&amp;5&amp;-6\end{bmatrix}\end{split}\]</div>
+<p>は2つの行と3つの列によって構成されているため、(2,3)型または2×3型の行列と呼ばれる。</p>
+<p>書き並べられた要素は行列の成分と呼ばれ、行列の第 <span class="math notranslate nohighlight">\(i\)</span> 行目、<span class="math notranslate nohighlight">\(j\)</span> 列目の成分を特に行列の <span class="math notranslate nohighlight">\((i, j)\)</span> 成分と言う。行列の <span class="math notranslate nohighlight">\((i, j)\)</span> 成分はふつう <span class="math notranslate nohighlight">\(a_{ij}\)</span> のように二つの添字を単に横並びに書くが、誤解を避けるために添字の間にコンマを入れることもある。また略式的に、行列 <span class="math notranslate nohighlight">\(A\)</span> の <span class="math notranslate nohighlight">\((i, j)\)</span> 成分を指定するのに <span class="math notranslate nohighlight">\(A_{ij}\)</span> という記法を用いることもある。</p>
+<p><a class="reference external" href="https://ja.wikipedia.org/wiki/%E8%A1%8C%E5%88%97">行列 - Wikipedia</a></p>
+</div></blockquote>
+<p>ぶっちゃけ、数字を矩形に並べただけのもの(ﾃｷﾄｰ)。</p>
+<div class="section" id="どっちが行で、どっちが列なのさ">
+<h2><span class="section-number">4.8.1. </span>どっちが行で、どっちが列なのさ<a class="headerlink" href="#どっちが行で、どっちが列なのさ" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>よく混乱する。Excelとか。</p>
+<blockquote>
+<div><p>文字送りの方向（横）の並びを行 (英: row) といい、行送りの方向（縦）の並びを列 (英: column) と呼ぶ</p>
+<p><a class="reference external" href="https://ja.wikipedia.org/wiki/%E8%A1%8C%E5%88%97">行列 - Wikipedia</a></p>
+</div></blockquote>
+<p>漢字で覚えるとかもありますが、<a class="reference external" href="https://twitter.com/motcho_tw/status/966992405437194241?s=20">呪いの画像</a> もあるのでやめたほうがいい。</p>
+</div>
+<div class="section" id="m-\times-n-行列">
+<h2><span class="section-number">4.8.2. </span><span class="math notranslate nohighlight">\(m \times n\)</span> 行列<a class="headerlink" href="#m-\times-n-行列" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><p>行列に含まれる行の数が <span class="math notranslate nohighlight">\(m\)</span>, 列の数が <span class="math notranslate nohighlight">\(n\)</span> である時に、その行列を <span class="math notranslate nohighlight">\(m\)</span> 行 <span class="math notranslate nohighlight">\(n\)</span> 列行列や <span class="math notranslate nohighlight">\(m \times n\)</span> 行列、<span class="math notranslate nohighlight">\(mn\)</span> 行列などと呼ぶ。行列を構成する行の数と列の数の対を型 (英: type) あるいはサイズという。したがって <span class="math notranslate nohighlight">\(m\)</span> 行 <span class="math notranslate nohighlight">\(n\)</span> 列行列のことを <span class="math notranslate nohighlight">\((m, n)\)</span> 型行列などと呼ぶこともある。<span class="math notranslate nohighlight">\(K\)</span> 上の <span class="math notranslate nohighlight">\(m \times n\)</span> 行列の全体は <span class="math notranslate nohighlight">\(K^{m \times n}\)</span>, <span class="math notranslate nohighlight">\(K^{m,n}\)</span> や <span class="math notranslate nohighlight">\(Mat(m, n; K)\)</span>, <span class="math notranslate nohighlight">\(M_{m \times n}(K)\)</span> などで表される。</p>
+<p><a class="reference external" href="https://ja.wikipedia.org/wiki/%E8%A1%8C%E5%88%97">行列 - Wikipedia</a></p>
+</div></blockquote>
+</div>
+<div class="section" id="乗算">
+<h2><span class="section-number">4.8.3. </span>乗算<a class="headerlink" href="#乗算" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="スカラー倍">
+<h3><span class="section-number">4.8.3.1. </span>スカラー倍<a class="headerlink" href="#スカラー倍" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>行列とスカラー倍の乗算は <span class="math notranslate nohighlight">\(\lambda\)</span> (ラムダ)で表すらしい。 <a class="reference external" href="https://oguemon.com/study/linear-algebra/matrix-op/#toc7">https://oguemon.com/study/linear-algebra/matrix-op/#toc7</a></p>
+<div class="math notranslate nohighlight">
+\[\lambda A = [\lambda a_{ij}]\]</div>
+</div>
+<div class="section" id="行列同士">
+<h3><span class="section-number">4.8.3.2. </span>行列同士<a class="headerlink" href="#行列同士" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>行列同士の乗算はちょっと複雑。納得するためにちょっとWikibooksから引用しよう。</p>
+<blockquote>
+<div><p>1次方程式</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+x + 2y = 1 \\
+2x + 3y = 2
+\end{cases}\end{split}\]</div>
+<p>を、次のような記法で現してみる</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+1 &amp; 2 \\
+2 &amp; 3
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 \\
+2
+\end{pmatrix}\end{split}\]</div>
+<p>これから勉強するのは、連立方程式とベクトルとの関係であり、それを考察しやすくするために、あらたに行列（ぎょうれつ）という量を導入する。 <a class="reference external" href="https://ja.wikibooks.org/wiki/%E9%AB%98%E7%AD%89%E5%AD%A6%E6%A0%A1%E6%95%B0%E5%AD%A6C/%E8%A1%8C%E5%88%97">https://ja.wikibooks.org/wiki/%E9%AB%98%E7%AD%89%E5%AD%A6%E6%A0%A1%E6%95%B0%E5%AD%A6C/%E8%A1%8C%E5%88%97</a></p>
+</div></blockquote>
+<p>まず、この連立1次方程式の <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span> を解いてみる。</p>
+<p><span class="math notranslate nohighlight">\(x + 2y = 1\)</span> を式変形して…</p>
+<div class="math notranslate nohighlight">
+\[x = 1 - 2y\]</div>
+<p>この<span class="math notranslate nohighlight">\(x\)</span>を<span class="math notranslate nohighlight">\(2x + 3y = 2\)</span>に代入すると、</p>
+<div class="math notranslate nohighlight">
+\[2(1 - 2y) + 3y = 2\]</div>
+<p>ここから、<span class="math notranslate nohighlight">\(2 \times 1 - 2 \times 2y + 3y = 2\)</span>、<span class="math notranslate nohighlight">\(2 - 4y + 3y = 2\)</span>、<span class="math notranslate nohighlight">\(2 - y = 2\)</span>となり、最終的に<span class="math notranslate nohighlight">\(y\)</span>は</p>
+<div class="math notranslate nohighlight">
+\[y = 0\]</div>
+<p>となる。後は<span class="math notranslate nohighlight">\(x = 1 - 2y\)</span>に<span class="math notranslate nohighlight">\(y = 0\)</span>を代入して、<span class="math notranslate nohighlight">\(x = 1 - 2 \times 0\)</span>、</p>
+<div class="math notranslate nohighlight">
+\[x = 1\]</div>
+<p>では、行列に代入してみよう。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+    1 &amp; 2 \\
+    2 &amp; 3
+\end{pmatrix}
+\begin{pmatrix}
+    1 \\
+    0
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 \\
+2
+\end{pmatrix}\end{split}\]</div>
+<p>この式を成り立たせるために、行列同士の積はどう計算すればよいだろうか？</p>
+<p>一旦、<span class="math notranslate nohighlight">\(2\)</span>とか<span class="math notranslate nohighlight">\(3\)</span>とかになっている数字(プログラムでいえば、マジックナンバーだね！)を変数にしてみよう。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+    ax + by = p \\
+    cx + dy = q
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+    a &amp; b \\
+    c &amp; d
+\end{pmatrix}
+\begin{pmatrix}
+    x \\
+    y
+\end{pmatrix}
+=
+\begin{pmatrix}
+p \\
+q
+\end{pmatrix}\end{split}\]</div>
+<p>行列式にある<span class="math notranslate nohighlight">\(p\)</span>, <span class="math notranslate nohighlight">\(q\)</span>を置き換えてみよう。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+    a &amp; b \\
+    c &amp; d
+\end{pmatrix}
+\begin{pmatrix}
+    x \\
+    y
+\end{pmatrix}
+=
+\begin{pmatrix}
+ax + by \\
+cx + dy
+\end{pmatrix}\end{split}\]</div>
+<p>行列の積っぽいものが出てきた。いや、「ぽいもの」ではなく、これが行列の積である。</p>
+</div>
+</div>
+<div class="section" id="加算・減算">
+<h2><span class="section-number">4.8.4. </span>加算・減算<a class="headerlink" href="#加算・減算" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>あんまりしない気がする🤔</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}  A = \left(
+  \begin{array}{ccc}
+    a_1 &amp; a_2 \\
+    a_3 &amp; a_4
+  \end{array}
+\right) = [a_{ij}]\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}  B = \left(
+  \begin{array}{ccc}
+    b_1 &amp; b_2 \\
+    b_3 &amp; b_4
+  \end{array}
+\right) = [b_{ij}]\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}  A + B = \left|
+  \begin{array}{ccc}
+    a_1 + b_1 &amp; a_2 + b_2 \\
+    a_3 + b_3 &amp; a_4 + b_4
+  \end{array}
+\right| = [a_{ij} + b_{ij}]\end{split}\]</div>
+<p>行数、列数が同じもの同士でなければ加算、減算はできない。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ex3.雑談.html" class="btn btn-neutral float-right" title="4.9. シグモイド関数" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ex1.what-exp.html" class="btn btn-neutral float-left" title="4.7. 🤔\(\exp(-x)\) と \(\mathrm{e}^{-x}\) って" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

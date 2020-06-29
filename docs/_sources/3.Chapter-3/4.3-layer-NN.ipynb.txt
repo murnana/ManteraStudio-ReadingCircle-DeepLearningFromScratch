@@ -1,0 +1,329 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 3層ニューラルネットワークの実装"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 入力層から第1層への信号の伝達\n",
+    "\n",
+    "![入力層から第1層へ](../draw.io/images-input-layer-to-1st-layer.svg)\n",
+    "\n",
+    "第1層を式で表すと:\n",
+    "$$\n",
+    "    \\begin{cases}\n",
+    "        a_1 = w_{11}x_{1} + w_{12}x_{2} + b_1 \\\\\n",
+    "        a_2 = w_{21}x_{1} + w_{22}x_{2} + b_2 \\\\\n",
+    "        a_3 = w_{31}x_{1} + w_{32}x_{2} + b_3\n",
+    "    \\end{cases}\n",
+    "$$\n",
+    "\n",
+    "これを行列にすると…入力$x_1, x_2$は\n",
+    "$$\n",
+    "    X = \\begin{pmatrix}\n",
+    "        x_1 & x_2\n",
+    "    \\end{pmatrix}\n",
+    "$$\n",
+    "バイアス$b_1, b_2, b_3$は\n",
+    "$$\n",
+    "    B = \\begin{pmatrix}\n",
+    "        b_{1} & b_{2} & b_{3}\n",
+    "    \\end{pmatrix}\n",
+    "$$\n",
+    "重み$ w_{11}, w_{21}, w_{31}, w_{12}, w_{22}, w_{32}$は\n",
+    "$$\n",
+    "    W = \\begin{pmatrix}\n",
+    "        w_{11} & w_{21} & w_{31} \\\\\n",
+    "        w_{12} & w_{22} & w_{32}\n",
+    "    \\end{pmatrix}\n",
+    "$$\n",
+    "入力・バイアスと重みの総和$a_1, a_2, a_3$は\n",
+    "$$\n",
+    "    A = \\begin{pmatrix}\n",
+    "        a_1 & a_2 & a_3\n",
+    "    \\end{pmatrix}\n",
+    "$$\n",
+    "そして、$A$を出力する式は\n",
+    "$$\n",
+    "    A = XW + B\n",
+    "$$\n",
+    "\n",
+    "Pythonであらわすとこうなります。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[0.3 0.7 0.8]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "X1 = np.array([1.0, 0.5])                            # 入力層の値\n",
+    "W1 = np.array([[0.1, 0.3, 0.5], [0.2, 0.4, 0.0]])    # 重み\n",
+    "B1 = np.array([0.1, 0.2, 0.3])                       # バイアス\n",
+    "\n",
+    "A1 = np.dot(X1, W1) + B1                             # 入力 x 重み + バイアス\n",
+    "print(A1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "では、この総和$A$を活性化関数に入れます。活性化関数にはシグモイドを使用してみます。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[0.57444252 0.66818777 0.68997448]\n"
+     ]
+    }
+   ],
+   "source": [
+    "import os\n",
+    "import sys\n",
+    "module_path = os.path.abspath(os.path.join('..', 'myModules'))\n",
+    "if module_path not in sys.path:\n",
+    "    sys.path.append(module_path)\n",
+    "\n",
+    "from activator import sigmoid # activator.pyにあるsigmoidを使う\n",
+    "\n",
+    "Z1 = sigmoid(A1)    # 活性化関数による、入力 x 重み + バイアスに対する計算 = 第1層の値\n",
+    "print(Z1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "入力層->第1層の計算は以上です。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 第1層から第2層\n",
+    "\n",
+    "第2層では、第1層の出力の総和から再び出力します。\n",
+    "\n",
+    "![第1層から第2層へ](../draw.io/images-1st-layer-to-2nd-layer.svg)\n",
+    "\n",
+    "$z_1, z_2, z_3$ は第1層の計算結果とします。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 🤔$b$はどこから\n",
+    "\n",
+    "今回のニューラルネットワークの構築に使用しているモデルが「パーセプトロン」を基にしているだからです。\n",
+    "\n",
+    "パーセプトロンに立ち戻ります。\n",
+    "> パーセプトロンの条件式を見てみよう\n",
+    "> $$\n",
+    "     y = \n",
+    "         \\begin{cases}\n",
+    "             0 \\quad (w_1 x_1 + w_2 x_2 \\leqq \\theta) \\\\\n",
+    "             1 \\quad (w_1 x_1 + w_2 x_2 > \\theta) \\\\\n",
+    "         \\end{cases}\n",
+    "$$\n",
+    "> \n",
+    "> ここで、$\\theta = -b$ とすると\n",
+    "> \n",
+    "> ...\n",
+    "> \n",
+    "> 式変形して\n",
+    "> \n",
+    "> $$\n",
+    "     y = \n",
+    "         \\begin{cases}\n",
+    "             0 \\quad (b + w_1 x_1 + w_2 x_2 \\leqq 0) \\\\\n",
+    "             1 \\quad (b + w_1 x_1 + w_2 x_2 > 0) \\\\\n",
+    "         \\end{cases}\n",
+    "$$\n",
+    "> \n",
+    "> ここで、$b$ を **バイアス** と呼び、$w_1$ $w_2$ を **重み** と呼びます\n",
+    "\n",
+    "パーセプトロンは、$\\theta$…閾値…と比較して、0またｈ1を出力するアルゴリズムでした。つまり入力以外に必ず閾値が必要なのです。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 🤔入力が3つあるけど？\n",
+    "\n",
+    "パーセプトンは(というよりニューラルネットワークは)、入力がいくつあってもよいのです。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Pythonによる実装"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[0.62200664 0.76456201]\n"
+     ]
+    }
+   ],
+   "source": [
+    "W2 = np.array([[0.1, 0.4], [0.2, 0.5], [0.3, 0.6]])  # 重み\n",
+    "B2 = np.array([0.1, 0.2])                            # バイアス\n",
+    "\n",
+    "A2 = np.dot(Z1, W2) + B2                             # 第1層の値 x 重み + バイアス\n",
+    "Z2 = sigmoid(A2)                                     # 第2層の値\n",
+    "\n",
+    "print(Z2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 第2層から出力層へ\n",
+    "\n",
+    "出力層では、活性化関数による計算は行いません。総和だけを求め、その値を出力します。\n",
+    "\n",
+    "入力をそのまま出力することを、数学では「恒等写像」(ｺｳﾄｳｼｬｿﾞｳ)といいます。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[0.31511307 0.6924268 ]\n"
+     ]
+    }
+   ],
+   "source": [
+    "W3 = np.array([[0.1, 0.3], [0.2, 0.4]])   # 重み\n",
+    "B3 = np.array([0.1, 0.2])                 # バイアス\n",
+    "\n",
+    "A3 = np.dot(Z2, W3) + B3                  # 第2層の値 x 重み + バイアス\n",
+    "\n",
+    "Y = A3 # 恒等写像\n",
+    "print(Y)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 実装のまとめ"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[0.31682708 0.69627909]\n"
+     ]
+    }
+   ],
+   "source": [
+    "def init_network():\n",
+    "    network = {}\n",
+    "    network['W1'] = np.array([[0.1, 0.3, 0.5], [0.2, 0.4, 0.6]])\n",
+    "    network['b1'] = np.array([0.1, 0.2, 0.3])\n",
+    "    network['W2'] = np.array([[0.1, 0.4], [0.2, 0.5], [0.3, 0.6]])\n",
+    "    network['b2'] = np.array([0.1, 0.2])\n",
+    "    network['W3'] = np.array([[0.1, 0.3], [0.2, 0.4]])\n",
+    "    network['b3'] = np.array([0.1, 0.2])\n",
+    "    \n",
+    "    return network\n",
+    "\n",
+    "def forward(network, x):\n",
+    "    W1, W2, W3 = network['W1'], network['W2'], network['W3']\n",
+    "    b1, b2, b3 = network['b1'], network['b2'], network['b3']\n",
+    "    \n",
+    "    a1 = np.dot(x, W1) + b1\n",
+    "    z1 = sigmoid(a1)\n",
+    "    a2 = np.dot(z1, W2) + b2\n",
+    "    z2 = sigmoid(a2)\n",
+    "    a3 = np.dot(z2, W3) + b3\n",
+    "    y = a3\n",
+    "    \n",
+    "    return y\n",
+    "\n",
+    "network = init_network()\n",
+    "x = np.array([1.0, 0.5])\n",
+    "y = forward(network, x)\n",
+    "print(y)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* `init_network` で重みとバイアスの初期化\n",
+    "* `forward` で入力信号を出力信号に変換する\n",
+    "* `forward`の逆の処理…出力信号から入力信号…はバックフォワードという"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

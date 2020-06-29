@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. 3章 ニューラルネットワーク &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="4.1. パーセプトロンからニューラルネットワークへ" href="1.perceptron-to-neural-network.html" />
+    <link rel="prev" title="3.6. 多層パーセプトロン3層までの学習には、ヘブ則を使うとよい" href="../2.Chapter-2/ex1.hebbian.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. 3章 ニューラルネットワーク</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="1.perceptron-to-neural-network.html">4.1. パーセプトロンからニューラルネットワークへ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.activation-function.html">4.2. 活性化関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.multidimensional-array.html">4.3. 多次元配列の計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.3-layer-NN.html">4.4. 3層ニューラルネットワークの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.output-layer.html">4.5. 出力層の設計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.MNIST.html">4.6. 手書き数字認識</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex1.what-exp.html">4.7. 🤔<span class="math notranslate nohighlight">\(\exp(-x)\)</span> と <span class="math notranslate nohighlight">\(\mathrm{e}^{-x}\)</span> って</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex2.what-matrix.html">4.8. 🤔行列とは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html">4.9. シグモイド関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html#なめらかとは">4.10. なめらかとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex4.what-mapping-map.html">4.11. 写像とは</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">4. </span>3章 ニューラルネットワーク</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/3.Chapter-3/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="id1">
+<h1><span class="section-number">4. </span>3章 ニューラルネットワーク<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1.perceptron-to-neural-network.html">4.1. パーセプトロンからニューラルネットワークへ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2.activation-function.html">4.2. 活性化関数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.multidimensional-array.html">4.3. 多次元配列の計算</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4.3-layer-NN.html">4.4. 3層ニューラルネットワークの実装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5.output-layer.html">4.5. 出力層の設計</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6.MNIST.html">4.6. 手書き数字認識</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex1.what-exp.html">4.7. 🤔<span class="math notranslate nohighlight">\(\exp(-x)\)</span> と <span class="math notranslate nohighlight">\(\mathrm{e}^{-x}\)</span> って</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex2.what-matrix.html">4.8. 🤔行列とは</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex3.雑談.html">4.9. シグモイド関数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex3.雑談.html#なめらかとは">4.10. なめらかとは</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex4.what-mapping-map.html">4.11. 写像とは</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="1.perceptron-to-neural-network.html" class="btn btn-neutral float-right" title="4.1. パーセプトロンからニューラルネットワークへ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../2.Chapter-2/ex1.hebbian.html" class="btn btn-neutral float-left" title="3.6. 多層パーセプトロン3層までの学習には、ヘブ則を使うとよい" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

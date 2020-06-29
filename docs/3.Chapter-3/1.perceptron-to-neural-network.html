@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.1. パーセプトロンからニューラルネットワークへ &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="4.2. 活性化関数" href="2.activation-function.html" />
+    <link rel="prev" title="4. 3章 ニューラルネットワーク" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. 3章 ニューラルネットワーク</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. パーセプトロンからニューラルネットワークへ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#🤔ニューラルネットワークってどういう発想からきてるのさ">4.1.1. 🤔ニューラルネットワークってどういう発想からきてるのさ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ニューラルネットワークの例">4.1.2. ニューラルネットワークの例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#パーセプトロンを、ニューラルネットワークの形に変形させてみよう">4.1.3. パーセプトロンを、ニューラルネットワークの形に変形させてみよう</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#活性化関数">4.1.4. 活性化関数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="2.activation-function.html">4.2. 活性化関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.multidimensional-array.html">4.3. 多次元配列の計算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.3-layer-NN.html">4.4. 3層ニューラルネットワークの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.output-layer.html">4.5. 出力層の設計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.MNIST.html">4.6. 手書き数字認識</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex1.what-exp.html">4.7. 🤔<span class="math notranslate nohighlight">\(\exp(-x)\)</span> と <span class="math notranslate nohighlight">\(\mathrm{e}^{-x}\)</span> って</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex2.what-matrix.html">4.8. 🤔行列とは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html">4.9. シグモイド関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html#なめらかとは">4.10. なめらかとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex4.what-mapping-map.html">4.11. 写像とは</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">4. </span>3章 ニューラルネットワーク</a> &raquo;</li>
+        
+      <li><span class="section-number">4.1. </span>パーセプトロンからニューラルネットワークへ</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/3.Chapter-3/1.perceptron-to-neural-network.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="パーセプトロンからニューラルネットワークへ">
+<h1><span class="section-number">4.1. </span>パーセプトロンからニューラルネットワークへ<a class="headerlink" href="#パーセプトロンからニューラルネットワークへ" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="🤔ニューラルネットワークってどういう発想からきてるのさ">
+<h2><span class="section-number">4.1.1. </span>🤔ニューラルネットワークってどういう発想からきてるのさ<a class="headerlink" href="#🤔ニューラルネットワークってどういう発想からきてるのさ" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><p>ニューラルネットワーク（神経網、英: neural network、略称: NN）は、脳機能に見られるいくつかの特性に類似した数理的モデルである。 <a class="reference external" href="https://ja.wikipedia.org/wiki/%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF">ニューラルネットワーク - Wikipedia</a></p>
+</div></blockquote>
+<p>ｽｳﾘﾃｷﾓﾃﾞﾙと言われましても…というわけで、過去自分が聞いた程度の話でまとめると</p>
+<ul class="simple">
+<li><p>動物の脳は多数の神経細胞でできている</p></li>
+<li><p>神経細胞は <strong>シナプス</strong> で繋がっている</p></li>
+<li><p>シナプスには入力と出力がある</p></li>
+</ul>
+<p>と、脳の神経細胞をモデルとしたもので、これがあれば人の脳に近いものができるんじゃね？という発想からきている、らしい。</p>
+<p>※ネタバレ: 実際は作るのに膨大なデータと時間が必要なので、ほんの一部のことしかできない</p>
+</div>
+<div class="section" id="ニューラルネットワークの例">
+<h2><span class="section-number">4.1.2. </span>ニューラルネットワークの例<a class="headerlink" href="#ニューラルネットワークの例" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><img alt="Neural Network" src="../_images/neural-network.svg" /></p>
+<ul class="simple">
+<li><p>左から <strong>入力層</strong>, <strong>中間層</strong>, <strong>出力層</strong> と呼ばれる</p></li>
+<li><p>本では順に <em>第0層</em>, <em>第1層</em>, <em>第2層</em> と呼ぶことにしている</p></li>
+<li><p>この本では、図のように重みを持つ層が2つあることからを <strong>2層ネットワーク</strong> としているが、書籍によってはネットワークを構成する層から <em>3層ネットワーク</em>とする場合もある</p></li>
+</ul>
+</div>
+<div class="section" id="パーセプトロンを、ニューラルネットワークの形に変形させてみよう">
+<h2><span class="section-number">4.1.3. </span>パーセプトロンを、ニューラルネットワークの形に変形させてみよう<a class="headerlink" href="#パーセプトロンを、ニューラルネットワークの形に変形させてみよう" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="line-block">
+<div class="line">パーセプトロンはこういう図で表すことができる:</div>
+<div class="line"><img alt="Perceptron" src="../_images/perceptron-replace-h.svg" /></div>
+</div>
+<div class="line-block">
+<div class="line">式はこうだ。</div>
+<div class="line">2つの入力<span class="math notranslate nohighlight">\(x_1\)</span>,<span class="math notranslate nohighlight">\(x_2\)</span>と、それぞれの重み<span class="math notranslate nohighlight">\(w_1\)</span>,<span class="math notranslate nohighlight">\(w_2\)</span>と、閾値<span class="math notranslate nohighlight">\(\theta\)</span>を比較した条件式の出力<span class="math notranslate nohighlight">\(y\)</span>は:</div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}y =
+    \begin{cases}
+        0 \quad (w_1 x_1 + w_2 x_2 \leqq \theta) \\
+        1 \quad (w_1 x_1 + w_2 x_2 &gt; \theta) \\
+    \end{cases}\end{split}\]</div>
+</div></blockquote>
+<p>そして、<span class="math notranslate nohighlight">\(\theta\)</span>をバイアス(<span class="math notranslate nohighlight">\(- b\)</span>)に置き換えて、式変形をするとこうなった:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}y =
+    \begin{cases}
+        0 \quad (b + w_1 x_1 + w_2 x_2 \leqq 0) \\
+        1 \quad (b + w_1 x_1 + w_2 x_2 &gt; 0) \\
+    \end{cases}\end{split}\]</div>
+<div class="line-block">
+<div class="line">では、これを先ほどの図に表すと…？:</div>
+<div class="line"><img alt="Perceptron" src="../_images/perceptron-replace-h.svg" /></div>
+</div>
+<p>何が言いたいかというと、バイアス(<span class="math notranslate nohighlight">\(b\)</span>)は別の入力の重み、と言い換えられるということである。</p>
+<div class="line-block">
+<div class="line">ところが、この図には問題がある。出力<span class="math notranslate nohighlight">\(y\)</span>の中身は計算した結果にしなければならないが、図の<span class="math notranslate nohighlight">\(y\)</span>は関数ではなく、変数だ。<span class="math notranslate nohighlight">\(y\)</span>には隠された関数がいるはずだ。</div>
+<div class="line">(と、解釈することで「なんで突然、入力の総和<span class="math notranslate nohighlight">\(a\)</span>なんて言い出したんだ」という疑問の解決になるはず…)</div>
+</div>
+<p>隠された関数を定義しなければならないので、数式を変形させよう。</p>
+<p>まず注目すべき場所は、条件式の中にある<span class="math notranslate nohighlight">\(b + w_1 x_1 + w_2 x_2\)</span>だ。この結果を条件式で使うなら、変数に入れた方がまとめられそうだ。この結果を<span class="math notranslate nohighlight">\(a\)</span>としよう。</p>
+<div class="math notranslate nohighlight">
+\[a = b + w_1 x_1 + w_2 x_2\]</div>
+<p>条件式を置き換えてみよう:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}y =
+     \begin{cases}
+         0 \quad (a \leqq 0) \\
+         1 \quad (a &gt; 0) \\
+     \end{cases}\end{split}\]</div>
+<div class="line-block">
+<div class="line">すっきりしてきた。一旦図にしてみよう:</div>
+<div class="line"><img alt="Perceptron" src="../_images/perceptron-replace-h.svg" /></div>
+</div>
+<p>おっと、図にすると条件式を書かざるを得ない。見にくいので、この条件式を<span class="math notranslate nohighlight">\(h()\)</span>関数としよう。数式ではこうだ:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}h(a) =
+    \begin{cases}
+         0 \quad (a \leqq 0) \\
+         1 \quad (a &gt; 0) \\
+     \end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[y = h(a)\]</div>
+<div class="line-block">
+<div class="line">では、図にしてみよう:</div>
+<div class="line"><img alt="Perceptron" src="../_images/perceptron-replace-h.svg" /></div>
+</div>
+<div class="line-block">
+<div class="line">よさそうだ。これ以上まとめるものがない。</div>
+<div class="line">では、必要な数式をいったんまとめよう。</div>
+</div>
+<p>2つの入力<span class="math notranslate nohighlight">\(x_1\)</span>,<span class="math notranslate nohighlight">\(x_2\)</span>と、それぞれの重み<span class="math notranslate nohighlight">\(w_1\)</span>,<span class="math notranslate nohighlight">\(w_2\)</span>の結果<span class="math notranslate nohighlight">\(a\)</span>は:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}a = b + w_1 x_1 + w_2 x_2 \\\end{split}\]</div>
+<p>そして、<span class="math notranslate nohighlight">\(a\)</span>を利用した関数<span class="math notranslate nohighlight">\(h()\)</span>の式は:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}h(a) =
+    \begin{cases}
+         0 \quad (a \leqq 0) \\
+         1 \quad (a &gt; 0) \\
+     \end{cases}\end{split}\]</div>
+<p>関数<span class="math notranslate nohighlight">\(h()\)</span>の結果<span class="math notranslate nohighlight">\(y\)</span>は:</p>
+<div class="math notranslate nohighlight">
+\[y = h(a)\]</div>
+<p>おお、前に「<span class="math notranslate nohighlight">\(x_1\)</span>,<span class="math notranslate nohighlight">\(x_2\)</span>と、それぞれの重み<span class="math notranslate nohighlight">\(w_1\)</span>,<span class="math notranslate nohighlight">\(w_2\)</span>と、閾値<span class="math notranslate nohighlight">\(\theta\)</span>を比較した条件式の出力<span class="math notranslate nohighlight">\(y\)</span>」とか長ったらしくて一瞬「？」になったものが、わかりやすく説明できるようになった。</p>
+</div>
+<div class="section" id="活性化関数">
+<h2><span class="section-number">4.1.4. </span>活性化関数<a class="headerlink" href="#活性化関数" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>関数<span class="math notranslate nohighlight">\(h()\)</span>のように、入力信号の総和を出力信号に変換っする関数は、一般的に <strong>活性化関数</strong> (activation function)と呼ばれる。</p>
+<p>また、今まで図で表していた〇を「ノード」または「ニューロン」と呼ぶ。</p>
+<p>活性化関数のアルゴリズムは、パーセプトロンのほかにもある。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="2.activation-function.html" class="btn btn-neutral float-right" title="4.2. 活性化関数" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="4. 3章 ニューラルネットワーク" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

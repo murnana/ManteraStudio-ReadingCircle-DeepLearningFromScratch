@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.4. 3層ニューラルネットワークの実装 &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="4.5. 出力層の設計" href="5.output-layer.html" />
+    <link rel="prev" title="4.3. 多次元配列の計算" href="3.multidimensional-array.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. 3章 ニューラルネットワーク</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1.perceptron-to-neural-network.html">4.1. パーセプトロンからニューラルネットワークへ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2.activation-function.html">4.2. 活性化関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3.multidimensional-array.html">4.3. 多次元配列の計算</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.4. 3層ニューラルネットワークの実装</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#入力層から第1層への信号の伝達">4.4.1. 入力層から第1層への信号の伝達</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#第1層から第2層">4.4.2. 第1層から第2層</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#🤔bはどこから">4.4.2.1. 🤔<span class="math notranslate nohighlight">\(b\)</span>はどこから</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#🤔入力が3つあるけど？">4.4.2.2. 🤔入力が3つあるけど？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Pythonによる実装">4.4.2.3. Pythonによる実装</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#第2層から出力層へ">4.4.3. 第2層から出力層へ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#実装のまとめ">4.4.4. 実装のまとめ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="5.output-layer.html">4.5. 出力層の設計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.MNIST.html">4.6. 手書き数字認識</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex1.what-exp.html">4.7. 🤔<span class="math notranslate nohighlight">\(\exp(-x)\)</span> と <span class="math notranslate nohighlight">\(\mathrm{e}^{-x}\)</span> って</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex2.what-matrix.html">4.8. 🤔行列とは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html">4.9. シグモイド関数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex3.雑談.html#なめらかとは">4.10. なめらかとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex4.what-mapping-map.html">4.11. 写像とは</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">4. </span>3章 ニューラルネットワーク</a> &raquo;</li>
+        
+      <li><span class="section-number">4.4. </span>3層ニューラルネットワークの実装</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/3.Chapter-3/4.3-layer-NN.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="3層ニューラルネットワークの実装">
+<h1><span class="section-number">4.4. </span>3層ニューラルネットワークの実装<a class="headerlink" href="#3層ニューラルネットワークの実装" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="入力層から第1層への信号の伝達">
+<h2><span class="section-number">4.4.1. </span>入力層から第1層への信号の伝達<a class="headerlink" href="#入力層から第1層への信号の伝達" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><img alt="入力層から第1層へ" src="../_images/images-input-layer-to-1st-layer.svg" /></p>
+<p>第1層を式で表すと:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+    a_1 = w_{11}x_{1} + w_{12}x_{2} + b_1 \\
+    a_2 = w_{21}x_{1} + w_{22}x_{2} + b_2 \\
+    a_3 = w_{31}x_{1} + w_{32}x_{2} + b_3
+\end{cases}\end{split}\]</div>
+<p>これを行列にすると…入力<span class="math notranslate nohighlight">\(x_1, x_2\)</span>は</p>
+<div class="math notranslate nohighlight">
+\[X = \begin{pmatrix}
+    x_1 &amp; x_2
+\end{pmatrix}\]</div>
+<p>バイアス<span class="math notranslate nohighlight">\(b_1, b_2, b_3\)</span>は</p>
+<div class="math notranslate nohighlight">
+\[B = \begin{pmatrix}
+    b_{1} &amp; b_{2} &amp; b_{3}
+\end{pmatrix}\]</div>
+<p>重み$ w_{11}, w_{21}, w_{31}, w_{12}, w_{22}, w_{32}$は</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}W = \begin{pmatrix}
+    w_{11} &amp; w_{21} &amp; w_{31} \\
+    w_{12} &amp; w_{22} &amp; w_{32}
+\end{pmatrix}\end{split}\]</div>
+<p>入力・バイアスと重みの総和<span class="math notranslate nohighlight">\(a_1, a_2, a_3\)</span>は</p>
+<div class="math notranslate nohighlight">
+\[A = \begin{pmatrix}
+    a_1 &amp; a_2 &amp; a_3
+\end{pmatrix}\]</div>
+<p>そして、<span class="math notranslate nohighlight">\(A\)</span>を出力する式は</p>
+<div class="math notranslate nohighlight">
+\[A = XW + B\]</div>
+<p>Pythonであらわすとこうなります。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">X1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>                            <span class="c1"># 入力層の値</span>
+<span class="n">W1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>    <span class="c1"># 重み</span>
+<span class="n">B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>                       <span class="c1"># バイアス</span>
+
+<span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">W1</span><span class="p">)</span> <span class="o">+</span> <span class="n">B1</span>                             <span class="c1"># 入力 x 重み + バイアス</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.3 0.7 0.8]
+</pre></div></div>
+</div>
+<p>では、この総和<span class="math notranslate nohighlight">\(A\)</span>を活性化関数に入れます。活性化関数にはシグモイドを使用してみます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">module_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;myModules&#39;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">module_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_path</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">activator</span> <span class="kn">import</span> <span class="n">sigmoid</span> <span class="c1"># activator.pyにあるsigmoidを使う</span>
+
+<span class="n">Z1</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>    <span class="c1"># 活性化関数による、入力 x 重み + バイアスに対する計算 = 第1層の値</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Z1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.57444252 0.66818777 0.68997448]
+</pre></div></div>
+</div>
+<p>入力層-&gt;第1層の計算は以上です。</p>
+</div>
+<div class="section" id="第1層から第2層">
+<h2><span class="section-number">4.4.2. </span>第1層から第2層<a class="headerlink" href="#第1層から第2層" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>第2層では、第1層の出力の総和から再び出力します。</p>
+<p><img alt="第1層から第2層へ" src="../_images/images-1st-layer-to-2nd-layer.svg" /></p>
+<p><span class="math notranslate nohighlight">\(z_1, z_2, z_3\)</span> は第1層の計算結果とします。</p>
+<div class="section" id="🤔bはどこから">
+<h3><span class="section-number">4.4.2.1. </span>🤔<span class="math notranslate nohighlight">\(b\)</span>はどこから<a class="headerlink" href="#🤔bはどこから" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>今回のニューラルネットワークの構築に使用しているモデルが「パーセプトロン」を基にしているだからです。</p>
+<p>パーセプトロンに立ち戻ります。 &gt; パーセプトロンの条件式を見てみよう &gt;</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}y =
+    \begin{cases}
+        0 \quad (w_1 x_1 + w_2 x_2 \leqq \theta) \\
+        1 \quad (w_1 x_1 + w_2 x_2 &gt; \theta) \\
+    \end{cases}\end{split}\]</div>
+<p>&gt; &gt; ここで、<span class="math notranslate nohighlight">\(\theta = -b\)</span> とすると &gt; &gt; … &gt; &gt; 式変形して &gt; &gt;</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}y =
+    \begin{cases}
+        0 \quad (b + w_1 x_1 + w_2 x_2 \leqq 0) \\
+        1 \quad (b + w_1 x_1 + w_2 x_2 &gt; 0) \\
+    \end{cases}\end{split}\]</div>
+<p>&gt; &gt; ここで、<span class="math notranslate nohighlight">\(b\)</span> を <strong>バイアス</strong> と呼び、<span class="math notranslate nohighlight">\(w_1\)</span> <span class="math notranslate nohighlight">\(w_2\)</span> を <strong>重み</strong> と呼びます</p>
+<p>パーセプトロンは、<span class="math notranslate nohighlight">\(\theta\)</span>…閾値…と比較して、0またｈ1を出力するアルゴリズムでした。つまり入力以外に必ず閾値が必要なのです。</p>
+</div>
+<div class="section" id="🤔入力が3つあるけど？">
+<h3><span class="section-number">4.4.2.2. </span>🤔入力が3つあるけど？<a class="headerlink" href="#🤔入力が3つあるけど？" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>パーセプトンは(というよりニューラルネットワークは)、入力がいくつあってもよいのです。</p>
+</div>
+<div class="section" id="Pythonによる実装">
+<h3><span class="section-number">4.4.2.3. </span>Pythonによる実装<a class="headerlink" href="#Pythonによる実装" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">W2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>  <span class="c1"># 重み</span>
+<span class="n">B2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>                            <span class="c1"># バイアス</span>
+
+<span class="n">A2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="n">W2</span><span class="p">)</span> <span class="o">+</span> <span class="n">B2</span>                             <span class="c1"># 第1層の値 x 重み + バイアス</span>
+<span class="n">Z2</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>                                     <span class="c1"># 第2層の値</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Z2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.62200664 0.76456201]
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="第2層から出力層へ">
+<h2><span class="section-number">4.4.3. </span>第2層から出力層へ<a class="headerlink" href="#第2層から出力層へ" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>出力層では、活性化関数による計算は行いません。総和だけを求め、その値を出力します。</p>
+<p>入力をそのまま出力することを、数学では「恒等写像」(ｺｳﾄｳｼｬｿﾞｳ)といいます。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">W3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>   <span class="c1"># 重み</span>
+<span class="n">B3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>                 <span class="c1"># バイアス</span>
+
+<span class="n">A3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z2</span><span class="p">,</span> <span class="n">W3</span><span class="p">)</span> <span class="o">+</span> <span class="n">B3</span>                  <span class="c1"># 第2層の値 x 重み + バイアス</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">A3</span> <span class="c1"># 恒等写像</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.31511307 0.6924268 ]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="実装のまとめ">
+<h2><span class="section-number">4.4.4. </span>実装のまとめ<a class="headerlink" href="#実装のまとめ" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">init_network</span><span class="p">():</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+    <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">network</span>
+
+<span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">W1</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">W3</span> <span class="o">=</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W1&#39;</span><span class="p">],</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W2&#39;</span><span class="p">],</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;W3&#39;</span><span class="p">]</span>
+    <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span> <span class="o">=</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b1&#39;</span><span class="p">],</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b2&#39;</span><span class="p">],</span> <span class="n">network</span><span class="p">[</span><span class="s1">&#39;b3&#39;</span><span class="p">]</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">W1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b1</span>
+    <span class="n">z1</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">a1</span><span class="p">)</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">z1</span><span class="p">,</span> <span class="n">W2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b2</span>
+    <span class="n">z2</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">z2</span><span class="p">,</span> <span class="n">W3</span><span class="p">)</span> <span class="o">+</span> <span class="n">b3</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">a3</span>
+
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="n">network</span> <span class="o">=</span> <span class="n">init_network</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">forward</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.31682708 0.69627909]
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">init_network</span></code> で重みとバイアスの初期化</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward</span></code> で入力信号を出力信号に変換する</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forward</span></code>の逆の処理…出力信号から入力信号…はバックフォワードという</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="5.output-layer.html" class="btn btn-neutral float-right" title="4.5. 出力層の設計" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="3.multidimensional-array.html" class="btn btn-neutral float-left" title="4.3. 多次元配列の計算" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
