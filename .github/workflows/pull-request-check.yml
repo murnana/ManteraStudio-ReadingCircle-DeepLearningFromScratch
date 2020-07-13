@@ -27,6 +27,10 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
 
+    # Setup Pandoc
+    - name: Setup Pandoc
+      uses: docker://pandoc/core:2.9
+
     # Setup pipenv
     - name: Setup pipenv
       run: |
