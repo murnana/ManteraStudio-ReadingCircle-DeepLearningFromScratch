@@ -33,7 +33,11 @@ release = '0.0.1'
 extensions = [
     'nbsphinx',
     'sphinx.ext.mathjax',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.doctest',
+    'sphinx.ext.coverage',
+    'sphinx.ext.duration'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
