@@ -37,6 +37,12 @@
                 "isDefault": true
             },
             "isBackground": false,
+            "dependsOn":[
+                "pipenv sync",
+                "make linkcheck",
+                "make doctest",
+                "make coverage"
+            ],
             "problemMatcher": []
         },
         {
@@ -44,9 +50,55 @@
             "type": "shell",
             "command": "pipenv",
             "args": [
-                "sync"
+                "sync",
+                "--dev",
             ],
             "isBackground": false,
+            "problemMatcher": []
+        },
+        {
+            "label": "make linkcheck",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "run",
+                "make",
+                "html"
+            ],
+            "isBackground": true,
+            "dependsOn":[
+                "pipenv sync"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "make doctest",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "run",
+                "make",
+                "doctest"
+            ],
+            "isBackground": true,
+            "dependsOn":[
+                "pipenv sync"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "make coverage",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "run",
+                "make",
+                "coverage"
+            ],
+            "isBackground": true,
+            "dependsOn":[
+                "pipenv sync"
+            ],
             "problemMatcher": []
         }
     ]
