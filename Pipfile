@@ -4,17 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+sphinx = "*"
+sphinx-rtd-theme = "*"
+pylint = "*"
 
 [packages]
 numpy = "*"
 matplotlib = "*"
 jupyterlab = "*"
 nbsphinx = "*"
-sphinx = "*"
 nbconvert = "*"
-sphinx-rtd-theme = "*"
 pandoc = "*"
-pylint = "*"
 autopep8 = "*"
 pillow = "*"
 
