@@ -27,6 +27,12 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
 
+    # Setup pandoc
+    - name: Setup Pandoc
+      run: |
+        wget https://github.com/jgm/pandoc/releases/download/2.10/pandoc-2.10-1-amd64.deb
+        sudo dpkg -i pandoc-2.10-1-amd64.deb
+
     # Setup pipenv
     - name: Setup pipenv
       run: |
@@ -36,7 +42,6 @@ jobs:
 
     # Check Sphinx
     - name: Check Sphinx
-      uses: docker://pandoc/core:2.9
       run: |
         pipenv run --verbose make linkcheck
         pipenv run --verbose make doctest
@@ -44,5 +49,4 @@ jobs:
 
     # Build Sphinx docs
     - name: Build Sphinx docs
-      uses: docker://pandoc/core:2.9
       run: pipenv run --verbose make html
