@@ -52,7 +52,7 @@ jobs:
     # Copy html pages
     - name: Copy html pages
       run: |
-        rd /s /q "./docs"
+        rd "./docs" /s /q
         mkdir "docs"
         xcopy "./build/html" "./docs" /D /S /R /Y /I /K
 
