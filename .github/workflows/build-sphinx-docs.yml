@@ -52,8 +52,8 @@ jobs:
     # Copy html pages
     - name: Copy html pages
       run: |
-        rd /s /q "./docs"
-        mkdir "docs"
+        rmdir /s /q docs
+        mkdir docs
         xcopy "./build/html" "./docs" /D /S /R /Y /I /K
 
     # Push pages
