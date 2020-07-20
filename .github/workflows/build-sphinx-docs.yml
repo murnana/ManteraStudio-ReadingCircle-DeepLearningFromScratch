@@ -52,9 +52,9 @@ jobs:
     # Copy html pages
     - name: Copy html pages
       run: |
-        rmdir /s /q docs
-        mkdir docs
-        xcopy "./build/html" "./docs" /D /S /R /Y /I /K
+        Remove-Item -Path "${GITHUB_WORKSPACE}\docs\*" -Recurse
+        New-Item -Path "${GITHUB_WORKSPACE}\docs" -ItemType Directory
+        Copy-Item -Path "${GITHUB_WORKSPACE}\build\html" -Recurse "${GITHUB_WORKSPACE}\docs\"
 
     # Push pages
     - name: Push pages
