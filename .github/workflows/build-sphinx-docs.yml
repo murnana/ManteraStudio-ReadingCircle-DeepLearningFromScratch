@@ -53,16 +53,32 @@ jobs:
     - name: Copy html pages
       run: |
         Remove-Item -Path ".\docs\*" -Recurse
-        Copy-Item -Path ".\build\html" -Recurse ".\docs"
+        Copy-Item -Path ".\build\html\*" -Destination ".\docs" -Recurse
 
-    # Push pages
-    - name: Push pages
+    # Commit files
+    - name: Commit files
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
-        git add --verbose docs
-        git remote set-url origin https://github.com/${GITHUB_REPOSITORY}.git
-        git commit -m "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}"
-        git checkout -b master origin/master
-        git merge --no-ff deveop
-        git push origin --all
+        git commit --all --verbose --message "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}"
+
+    # Push
+    - name: GitHub Push
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Pull Request
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2.8.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        title: 'Update master branch'
+        assignees: murnana
+        reviewers: murnana
+        draft: false
+        branch: master
