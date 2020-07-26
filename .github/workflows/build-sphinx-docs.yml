@@ -5,6 +5,9 @@ name: Build Sphinx-Docs
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  pull_request:
+    branches: [ develop ]
+    types: [ opened, reopened, synchronize, ready_for_review ]
   push:
     branches: [ develop ]
 
@@ -49,6 +52,14 @@ jobs:
     - name: Build Sphinx docs
       run: pipenv run --verbose make html
 
+
+
+  # Deploy Before
+  deploy-before:
+    if: success() && github.event.name == 'push' && ${GITHUB_REF} == 'refs/heads/develop'
+    needs: build
+    runs-on: windows-latest
+
     # Copy html pages
     - name: Copy html pages
       run: |
@@ -62,7 +73,7 @@ jobs:
       run: |
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
-        git commit --all --verbose --message "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}"
+        git commit --verbose --message "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}" -- .\docs
 
     # Push
     - name: GitHub Push
