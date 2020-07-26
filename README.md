@@ -2,6 +2,8 @@
 
 まんてらスタジオで行われた輪読会の、murnanaによるまとめです。
 
+![Build Sphinx-Docs](https://github.com/murnana/ManteraStudio-ReadingCircle-DeepLearningFromScratch/workflows/Build%20Sphinx-Docs/badge.svg)
+
 ## 始め方
 
 以下の手順で、開発・テストをローカルマシンで実行できるようになります。ライブシステムにプロジェクトをデプロイする方法については、デプロイメントをご覧ください。
