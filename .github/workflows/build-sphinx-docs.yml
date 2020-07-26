@@ -56,9 +56,11 @@ jobs:
 
   # Deploy Before
   deploy-before:
-    if: success() && github.event.name == 'push' && ${GITHUB_REF} == 'refs/heads/develop'
+    if: success() && contains(github.event.name, 'push') && contains(github.ref, 'refs/heads/develop')
     needs: build
     runs-on: windows-latest
+
+    steps:
 
     # Copy html pages
     - name: Copy html pages
