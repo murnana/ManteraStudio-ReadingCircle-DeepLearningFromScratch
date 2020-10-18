@@ -5,8 +5,11 @@ name: Build Sphinx-Docs
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  pull_request:
+    branches: [ develop ]
+    types: [ opened, reopened, synchronize, ready_for_review ]
   push:
-    branches: [ master ]
+    branches: [ develop ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -49,21 +52,46 @@ jobs:
     - name: Build Sphinx docs
       run: pipenv run --verbose make html
 
+
+
+  # Deploy Before
+  deploy-before:
+    if: success() && contains(github.event.name, 'push') && contains(github.ref, 'refs/heads/develop')
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+
     # Copy html pages
     - name: Copy html pages
       run: |
-        mkdir --parents --verbose docs
-        cp -r -v ./build/html ./docs
-        touch --no-create ./docs/.nojekyll
+        Remove-Item -Path ".\docs\*" -Recurse
+        Copy-Item -Path ".\build\html\*" -Destination ".\docs" -Recurse
 
-    # Push pages
-    - name: Push pages
+    # Commit files
+    - name: Commit files
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --local user.name "GitHub Action"
         git config --local user.email "action@github.com"
-        git add --verbose docs
-        if ! git diff --cached --quiet; then
-          git commit -m "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}"
-          git remote set-url origin https://github.com/${GITHUB_REPOSITORY}.git
-          git push origin master
-        fi
+        git commit --verbose --message "${GITHUB_WORKFLOW}: ${GITHUB_RUN_NUMBER}" -- .\docs
+
+    # Push
+    - name: GitHub Push
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Pull Request
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2.8.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        title: 'Update master branch'
+        assignees: murnana
+        reviewers: murnana
+        draft: false
+        branch: master
