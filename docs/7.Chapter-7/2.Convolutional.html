@@ -1,0 +1,654 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.2. 畳み込み層 &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="8.3. プーリング層" href="3.%20Pooling.html" />
+    <link rel="prev" title="8.1. CNN全体の構造" href="1.Convolutional-neural-network.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../3.Chapter-3/index.html">4. 3章 ニューラルネットワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4.Chapter-4/index.html">5. 4章 ニューラルネットワークの学習</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../5.Chapter-5/index.html">6. 5章 誤差伝搬法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../6.Chapter-6/index.html">7. ６章 学習に関するテクニック</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">8. 7章 畳み込みニューラルネットワーク</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1.Convolutional-neural-network.html">8.1. CNN全体の構造</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.2. 畳み込み層</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#畳み込み演算">8.2.1. 畳み込み演算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#パディング">8.2.2. パディング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ストライド">8.2.3. ストライド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3次元データの畳み込み演算">8.2.4. 3次元データの畳み込み演算</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#畳み込み演算のバッチ処理">8.2.5. 畳み込み演算のバッチ処理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="3.%20Pooling.html">8.3. プーリング層</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.Implement-Convolutional-Pooling.html">8.4. Comvolution / Pooling レイヤの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.%20Implement-CNN.html">8.5. CNNの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.%20CNN-visualize.html">8.6. CNNの可視化</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">8. </span>7章 畳み込みニューラルネットワーク</a> &raquo;</li>
+        
+      <li><span class="section-number">8.2. </span>畳み込み層</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/7.Chapter-7/2.Convolutional.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="畳み込み層">
+<h1><span class="section-number">8.2. </span>畳み込み層<a class="headerlink" href="#畳み込み層" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>全結合層の問題点は、データの形状が無視されること</p>
+<p>例えば画像の場合、縦、横、チャンネル(RGB)の3次元の形状を持っているが、全結合層に入力する際には、データを1次元にする必要がある。 (MNISTデータの場合は、1ピクセルずつを左上から？順に入れてましたね)</p>
+<p>そのため、例えば隣接するピクセルについての情報をくみ取ることが難しい。</p>
+<p>畳み込み層の場合は3次元のデータとしての形状を維持しながら、ニューロン間のデータの受け渡しをすることができる。</p>
+<p>CNNでは、入力データを「<strong>入力特徴マップ</strong> (input feature map)」、出力データを「<strong>出力特徴マップ</strong> (output feature map)」と言い、合わせて「<strong>特徴マップ</strong> (feature map)」という場合がある。</p>
+<div class="section" id="畳み込み演算">
+<h2><span class="section-number">8.2.1. </span>畳み込み演算<a class="headerlink" href="#畳み込み演算" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="line-block">
+<div class="line">画像処理でいう「フィルター演算」に相当</div>
+<div class="line">文献によれば「カーネル」という言葉で表現される場合がある。</div>
+</div>
+<p>畳み込み演算は、入力データに対してフィルターのウィンドウを一定の間隔でスライドさせながら適用していきます。ここでは縦、横を持つ2次元のデータで見てきましょう。</p>
+<p><img alt="image0" src="../_images/images.drawio-2-Stride.svg" /></p>
+<p>フィルターの要素と入力の要素を乗算し、その和を入れる。 この計算を<strong>積和演算</strong>という。</p>
+<p>CNNの場合、「重み」はフィルターのパラメータです。「バイアス」もあります。</p>
+<p>バイアスはフィルターで計算した後に、各マス目に加算します。</p>
+</div>
+<div class="section" id="パディング">
+<h2><span class="section-number">8.2.2. </span>パディング<a class="headerlink" href="#パディング" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>次の畳み込み層の処理を行う前に、入力データの周囲に固定のデータを埋める。これを「<strong>パディング</strong> (padding)」という。</p>
+<p><img alt="image0" src="../_images/images.drawio-2-Stride.svg" /></p>
+<p>パディングによって、次の計算の出力サイズを調整します。</p>
+<p>畳み込み演算は何度も行うと、出力サイズはどんどん小さくなり、最終的な出力サイズが1になってしまうかもしれません。この事態を回避するためにも、パディングを使います。</p>
+</div>
+<div class="section" id="ストライド">
+<h2><span class="section-number">8.2.3. </span>ストライド<a class="headerlink" href="#ストライド" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>フィルターを適用する位置の間隔を <strong>ストライド</strong> といいます。</p>
+<p>7×7の画像に対し、3×3のフィルターを1ピクセル毎に計算した場合、ストライドは1、出力は5×5になります</p>
+<p>ストライドが2になると、7×7の画像の出力は3×3になります。</p>
+<p><img alt="image0" src="../_images/images.drawio-2-Stride.svg" /></p>
+<p>入力サイズ、フィルターサイズ、パディング、ストライドから、出力サイズを計算する式は以下です:</p>
+<p>入力サイズを(H, W), フィルターサイズを(FH, FW), パディングをP, ストライドをS とすると、出力サイズを(OW, OH)は</p>
+<div class="math notranslate nohighlight">
+\[OH = \frac{H+2P-FH}{S} + 1\]</div>
+<div class="math notranslate nohighlight">
+\[OW = \frac{W+2P-FW}{S} + 1\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">H</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">FH</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">FW</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">S</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">OH</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FH</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">OW</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FW</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OH = </span><span class="si">{</span><span class="n">OH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OW = </span><span class="si">{</span><span class="n">OW</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OH = 5.0
+OW = 5.0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">H</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">FH</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">FW</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">S</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">OH</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FH</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">OW</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FW</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OH = </span><span class="si">{</span><span class="n">OH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OW = </span><span class="si">{</span><span class="n">OW</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OH = 3.0
+OW = 3.0
+</pre></div></div>
+</div>
+<p>ただし、大きさやストライドなどによっては、出力結果が小数点になってしまうこともある</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">H</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">FH</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">FW</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">S</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">OH</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FH</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">OW</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">-</span> <span class="n">FW</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OH = </span><span class="si">{</span><span class="n">OH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OW = </span><span class="si">{</span><span class="n">OW</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OH = 2.333333333333333
+OW = 2.333333333333333
+</pre></div></div>
+</div>
+<p>そのため、小数点以下が出てしまっている場合はエラーを出す、などの対策が必要です</p>
+</div>
+<div class="section" id="3次元データの畳み込み演算">
+<h2><span class="section-number">8.2.4. </span>3次元データの畳み込み演算<a class="headerlink" href="#3次元データの畳み込み演算" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>3次元データの畳み込み演算は、直方体のブロックで考えるとわかりやすいです。</p>
+<p>例えば、チャンネル数をC, 高さをH、横幅をWのデータは (C, H, W)と表現することができます。</p>
+<p>同様に、フィルターも(C, FH, FW)と書くことができます。フィルターのチャンネルは入力データの大きさと同一にする必要があるため、FCと表現しません。</p>
+<p>しかし出力結果がチャンネル方向にも持つ場合は、どうすればよいでしょうか？</p>
+<p>答えは、フィルターを増やすことです。(C, FH, FW)のフィルターをFN個増やすと、出力データにもFN個チャンネルを持たせることができます (FN, OH, OW)。</p>
+<hr class="docutils" />
+<p>ここまでが、畳み込み演算による重み(フィルター)の計算でした。畳み込み演算にはバイアスも存在します。</p>
+<p>バイアスはチャンネル数の数だけ存在します(FN, 1, 1)。畳み込み演算の結果(FN, OH, OW)に対して加算します。</p>
+</div>
+<div class="section" id="畳み込み演算のバッチ処理">
+<h2><span class="section-number">8.2.5. </span>畳み込み演算のバッチ処理<a class="headerlink" href="#畳み込み演算のバッチ処理" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>畳み込み演算も、バッチ処理ができます。</p>
+<p>バッチ処理を行う場合、C, H, Wの3次元データから、N個という4次元のデータとして計算します。</p>
+<p>N個の入力データはそのまま、N個の出力データとなりますが、計算回数は1回になります。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="3.%20Pooling.html" class="btn btn-neutral float-right" title="8.3. プーリング層" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="1.Convolutional-neural-network.html" class="btn btn-neutral float-left" title="8.1. CNN全体の構造" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

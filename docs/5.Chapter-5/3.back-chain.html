@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.2. 逆伝播 &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="6.3. 単純なレイヤの実装" href="4.simple-layer.html" />
+    <link rel="prev" title="6.1. 連鎖律" href="2.chain-rule.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../3.Chapter-3/index.html">4. 3章 ニューラルネットワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4.Chapter-4/index.html">5. 4章 ニューラルネットワークの学習</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. 5章 誤差伝搬法</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2.chain-rule.html">6.1. 連鎖律</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. 逆伝播</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#加算の場合の逆伝播">6.2.1. 加算の場合の逆伝播</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#乗算ノードの逆伝播">6.2.2. 乗算ノードの逆伝播</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#リンゴの買い物">6.2.3. リンゴの買い物</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="4.simple-layer.html">6.3. 単純なレイヤの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5.activate-layer.html">6.4. 活性化関数レイヤの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6.affine-and-softmax-layer.html">6.5. Affine / Softmax レイヤの実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.gradient.html">6.6. 誤差伝播法の実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="7.gradient.html#まとめ">6.7. まとめ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../6.Chapter-6/index.html">7. ６章 学習に関するテクニック</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../7.Chapter-7/index.html">8. 7章 畳み込みニューラルネットワーク</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">6. </span>5章 誤差伝搬法</a> &raquo;</li>
+        
+      <li><span class="section-number">6.2. </span>逆伝播</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/5.Chapter-5/3.back-chain.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="逆伝播">
+<h1><span class="section-number">6.2. </span>逆伝播<a class="headerlink" href="#逆伝播" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="加算の場合の逆伝播">
+<h2><span class="section-number">6.2.1. </span>加算の場合の逆伝播<a class="headerlink" href="#加算の場合の逆伝播" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>加算の場合、上流の逆伝播がそのまま流れる。</p>
+<p><span class="math notranslate nohighlight">\(z = x + y\)</span>という数式の、逆伝播を考えてみよう。</p>
+<div class="line-block">
+<div class="line">この式の微分は以下の通りになる:</div>
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\frac{\partial z}{\partial x} = 1\\
+\frac{\partial z}{\partial y} = 1\end{split}\]</div>
+</div></blockquote>
+<p><img alt="加算の場合の逆伝播" src="../_images/images-back-chain-apple.svg" /></p>
+</div>
+<div class="section" id="乗算ノードの逆伝播">
+<h2><span class="section-number">6.2.2. </span>乗算ノードの逆伝播<a class="headerlink" href="#乗算ノードの逆伝播" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>乗算ノードでは、順伝播の入力信号が必要です。</p>
+<div class="line-block">
+<div class="line"><span class="math notranslate nohighlight">\(z = xy\)</span>という式の微分は、</div>
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\frac{\partial z} {\partial x} = y \\
+\frac{\partial z} {\partial y} = x\end{split}\]</div>
+</div></blockquote>
+<p><img alt="加算の場合の逆伝播" src="../_images/images-back-chain-apple.svg" /></p>
+</div>
+<div class="section" id="リンゴの買い物">
+<h2><span class="section-number">6.2.3. </span>リンゴの買い物<a class="headerlink" href="#リンゴの買い物" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><p>太郎くんはスーパーで<span class="math notranslate nohighlight">\(1\)</span>個<span class="math notranslate nohighlight">\(100\)</span>円のリンゴを<span class="math notranslate nohighlight">\(2\)</span>個買いました。支払う金額を求めなさい。ただし、消費税が<span class="math notranslate nohighlight">\(10\)</span>%適用されるものとします。</p>
+</div></blockquote>
+<p>支払う金額は、<span class="math notranslate nohighlight">\(100 \times 2 \times 1.1 = 220\)</span>です。ここから、以下3つの微分を求めます。</p>
+<ul class="simple">
+<li><p>リンゴの値段に関する支払金額の微分</p></li>
+<li><p>リンゴの個数に関する支払金額の微分</p></li>
+<li><p>消費税に関する支払金額の微分</p></li>
+</ul>
+<p><img alt="加算の場合の逆伝播" src="../_images/images-back-chain-apple.svg" /></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="4.simple-layer.html" class="btn btn-neutral float-right" title="6.3. 単純なレイヤの実装" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="2.chain-rule.html" class="btn btn-neutral float-left" title="6.1. 連鎖律" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

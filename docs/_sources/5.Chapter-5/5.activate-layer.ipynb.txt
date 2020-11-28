@@ -1,0 +1,231 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 活性化関数レイヤの実装"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## ReLU\n",
+    "\n",
+    "$x>0$のとき、$y = x$ なので\n",
+    "![x>0](../draw.io/images.drawio-2-ReLU_x-grater-0.svg)\n",
+    "\n",
+    "$x \\leq 0$のとき、$y = 0$なので\n",
+    "![x<=0](../draw.io/images.drawio-2-ReLU_x-less-equal-0.svg)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import sys, os\n",
+    "sys.path.append(os.path.abspath(os.path.join('..', 'sample')))\n",
+    "import numpy as np\n",
+    "from common.functions import *\n",
+    "from common.util import im2col, col2im\n",
+    "\n",
+    "\n",
+    "class Relu:\n",
+    "    def __init__(self):\n",
+    "        \"\"\"\n",
+    "        順伝播の入力xに対する、0であればTrue、0以外をFalseを保持するマスクを初期化します\n",
+    "        Attributes\n",
+    "        ----------\n",
+    "        mask : numpy.array\n",
+    "            入力xが0以下なのか\n",
+    "        \"\"\"\n",
+    "        self.mask = None\n",
+    "\n",
+    "    def forward(self, x):\n",
+    "        \"\"\"\n",
+    "        順伝播の計算をします\n",
+    "        \n",
+    "        Parameters\n",
+    "        ----------\n",
+    "        x : numpy.array\n",
+    "            入力1\n",
+    "\n",
+    "        Returns\n",
+    "        -------\n",
+    "        out : numpy.array\n",
+    "            計算結果\n",
+    "        \"\"\"\n",
+    "        self.mask = (x <= 0)\n",
+    "        out = x.copy()\n",
+    "        out[self.mask] = 0\n",
+    "\n",
+    "        return out\n",
+    "\n",
+    "    def backward(self, dout):\n",
+    "        \"\"\"\n",
+    "        逆伝播の計算をします(乗算)\n",
+    "        \n",
+    "        Parameters\n",
+    "        ----------\n",
+    "        dout : int\n",
+    "            逆伝播で上流から伝わってきた微分\n",
+    "\n",
+    "        Returns\n",
+    "        -------\n",
+    "        dx : int\n",
+    "            入力2の微分\n",
+    "        dy : int\n",
+    "            入力1の微分\n",
+    "        \"\"\"\n",
+    "        dout[self.mask] = 0\n",
+    "        dx = dout\n",
+    "\n",
+    "        return dx"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`True`/`False`の値をnumpy.arrayにいれることができる"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[ 1.  -0.5]\n",
+      " [-2.   3. ]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "x = np.array([[1.0, -0.5], [-2.0, 3.0]])\n",
+    "print(x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[False  True]\n",
+      " [ True False]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "mask = (x <= 0)\n",
+    "print(mask)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Sigmoidレイヤ\n",
+    "\n",
+    "![Sigmoid](../draw.io/images.drawio-2-Sigmoid.svg)\n",
+    "\n",
+    "\n",
+    "つまり、Sigmoidレイヤの逆伝搬は$\\frac{\\partial L} {\\partial y} y^2\\exp(-x)$ですが、これをさらに展開します。\n",
+    "\n",
+    "\n",
+    "$$\n",
+    "    \\frac{\\partial L} {\\partial y} y^2\\exp(-x) = \\frac{\\partial L} {\\partial y} \\frac{1}{(1 + \\exp(-x))^2} \\exp(-x) \\\\\n",
+    "     = \\frac{\\partial L} {\\partial y} \\frac{1}{1 + \\exp(-x)} \\frac{\\exp(-x)}{1 + \\exp(-x)} \\\\\n",
+    "     = \\frac{\\partial L} {\\partial y} \\frac{1}{1 + \\exp(-x)} \\frac{\\exp(-x) + 1 - 1}{1 + \\exp(-x)} \\\\\n",
+    "     = \\frac{\\partial L} {\\partial y} \\frac{1}{1 + \\exp(-x)} (\\frac{\\exp(-x) + 1}{1 + \\exp(-x)} - \\frac{1}{1 + \\exp(-x)})\\\\\n",
+    "     = \\frac{\\partial L} {\\partial y} y(1-y)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class Sigmoid:\n",
+    "    def __init__(self):\n",
+    "        \"\"\"\n",
+    "        順伝播の入力xに対する、0であればTrue、0以外をFalseを保持するマスクを初期化します\n",
+    "        Attributes\n",
+    "        ----------\n",
+    "        mask : numpy.array\n",
+    "            入力xの結果y\n",
+    "        \"\"\"\n",
+    "        self.out = None\n",
+    "\n",
+    "    def forward(self, x):\n",
+    "        \"\"\"\n",
+    "        順伝搬の計算をします\n",
+    "        \n",
+    "        Parameters\n",
+    "        ----------\n",
+    "        x : numpy.array\n",
+    "            入力1\n",
+    "\n",
+    "        Returns\n",
+    "        -------\n",
+    "        dx : int\n",
+    "            入力2の微分\n",
+    "        \"\"\"\n",
+    "        out = sigmoid(x)\n",
+    "        self.out = out\n",
+    "        return out\n",
+    "\n",
+    "    def backward(self, dout):\n",
+    "        \"\"\"\n",
+    "        逆伝播の計算をします(乗算)\n",
+    "        \n",
+    "        Parameters\n",
+    "        ----------\n",
+    "        dout : double\n",
+    "            逆伝播で上流から伝わってきた微分\n",
+    "\n",
+    "        Returns\n",
+    "        -------\n",
+    "        dx : int\n",
+    "            入力1の微分\n",
+    "        \"\"\"\n",
+    "        dx = dout * (1.0 - self.out) * self.out\n",
+    "\n",
+    "        return dx"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

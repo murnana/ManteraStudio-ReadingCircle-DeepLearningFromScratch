@@ -1,0 +1,1221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.1. Batch Normalization &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="7.2. 4. 正則化" href="4.%20Overtraining.html" />
+    <link rel="prev" title="7. ６章 学習に関するテクニック" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../3.Chapter-3/index.html">4. 3章 ニューラルネットワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4.Chapter-4/index.html">5. 4章 ニューラルネットワークの学習</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../5.Chapter-5/index.html">6. 5章 誤差伝搬法</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. ６章 学習に関するテクニック</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.1. Batch Normalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="4.%20Overtraining.html">7.2. 4. 正則化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Untitled.html">7.3. ハイパーパラメータの検証</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../7.Chapter-7/index.html">8. 7章 畳み込みニューラルネットワーク</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">7. </span>６章 学習に関するテクニック</a> &raquo;</li>
+        
+      <li><span class="section-number">7.1. </span>Batch Normalization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/6.Chapter-6/3. Batch Normalization.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Batch-Normalization">
+<h1><span class="section-number">7.1. </span>Batch Normalization<a class="headerlink" href="#Batch-Normalization" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>利点:</p>
+<ul class="simple">
+<li><p>学習を早く進行させることができる</p></li>
+<li><p>初期値にそれほど依存しない</p>
+<ul>
+<li><p>あんまり凝って初期値を設定する必要がない</p></li>
+</ul>
+</li>
+<li><p>過学習を抑制する</p></li>
+</ul>
+<p>強制的にノーマライズ(0 ~ 1)を行う。 実際には、正規化後に多少値をいじる。それがスケーリング(乗算)とシフト(加算)。</p>
+<p>このスケーリングとシフトも学習対象で、学習させながら適宜調整する。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">)))</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">dataset.mnist</span> <span class="kn">import</span> <span class="n">load_mnist</span>
+<span class="kn">from</span> <span class="nn">common.multi_layer_net_extend</span> <span class="kn">import</span> <span class="n">MultiLayerNetExtend</span>
+<span class="kn">from</span> <span class="nn">common.optimizer</span> <span class="kn">import</span> <span class="n">SGD</span><span class="p">,</span> <span class="n">Adam</span>
+
+<span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">),</span> <span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">load_mnist</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 学習データを削減</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span>
+<span class="n">t_train</span> <span class="o">=</span> <span class="n">t_train</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span>
+
+<span class="n">max_epochs</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">train_size</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+
+<span class="k">def</span> <span class="nf">__train</span><span class="p">(</span><span class="n">weight_init_std</span><span class="p">):</span>
+    <span class="n">bn_network</span> <span class="o">=</span> <span class="n">MultiLayerNetExtend</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">hidden_size_list</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                    <span class="n">weight_init_std</span><span class="o">=</span><span class="n">weight_init_std</span><span class="p">,</span> <span class="n">use_batchnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">MultiLayerNetExtend</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">hidden_size_list</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">weight_init_std</span><span class="o">=</span><span class="n">weight_init_std</span><span class="p">)</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
+
+    <span class="n">train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">bn_train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">iter_per_epoch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">train_size</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">epoch_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000000</span><span class="p">):</span>
+        <span class="n">batch_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">train_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">x_batch</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">batch_mask</span><span class="p">]</span>
+        <span class="n">t_batch</span> <span class="o">=</span> <span class="n">t_train</span><span class="p">[</span><span class="n">batch_mask</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">_network</span> <span class="ow">in</span> <span class="p">(</span><span class="n">bn_network</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">_network</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">x_batch</span><span class="p">,</span> <span class="n">t_batch</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_network</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">grads</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">iter_per_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">train_acc</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">)</span>
+            <span class="n">bn_train_acc</span> <span class="o">=</span> <span class="n">bn_network</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">)</span>
+            <span class="n">train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span>
+            <span class="n">bn_train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bn_train_acc</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">epoch_cnt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bn_train_acc</span><span class="p">))</span>
+
+            <span class="n">epoch_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">epoch_cnt</span> <span class="o">&gt;=</span> <span class="n">max_epochs</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">bn_train_acc_list</span>
+
+
+<span class="c1"># 3.グラフの描画==========</span>
+<span class="n">weight_scale_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weight_scale_list</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;============== &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/16&quot;</span> <span class="o">+</span> <span class="s2">&quot; ==============&quot;</span><span class="p">)</span>
+    <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">bn_train_acc_list</span> <span class="o">=</span> <span class="n">__train</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;W:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">15</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bn_train_acc_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Batch Normalization&#39;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Normal(without BatchNorm)&#39;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bn_train_acc_list</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;epochs&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+============== 1/16 ==============
+epoch:0 | 0.097 - 0.108
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+C:\Users\anzuy\Project\ManteraStudio-ReadingCircle-DeepLearningFromScratch\source\sample\common\multi_layer_net_extend.py:101: RuntimeWarning: overflow encountered in square
+  weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W**2)
+C:\Users\anzuy\Project\ManteraStudio-ReadingCircle-DeepLearningFromScratch\source\sample\common\multi_layer_net_extend.py:101: RuntimeWarning: invalid value encountered in double_scalars
+  weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W**2)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:1 | 0.097 - 0.15
+epoch:2 | 0.097 - 0.174
+epoch:3 | 0.097 - 0.191
+epoch:4 | 0.097 - 0.215
+epoch:5 | 0.097 - 0.233
+epoch:6 | 0.097 - 0.243
+epoch:7 | 0.097 - 0.25
+epoch:8 | 0.097 - 0.273
+epoch:9 | 0.097 - 0.282
+epoch:10 | 0.097 - 0.299
+epoch:11 | 0.097 - 0.299
+epoch:12 | 0.097 - 0.308
+epoch:13 | 0.097 - 0.332
+epoch:14 | 0.097 - 0.344
+epoch:15 | 0.097 - 0.359
+epoch:16 | 0.097 - 0.377
+epoch:17 | 0.097 - 0.381
+epoch:18 | 0.097 - 0.387
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.097 - 0.399
+============== 2/16 ==============
+epoch:0 | 0.097 - 0.097
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+C:\Users\anzuy\Project\ManteraStudio-ReadingCircle-DeepLearningFromScratch\source\sample\common\multi_layer_net_extend.py:101: RuntimeWarning: overflow encountered in square
+  weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W**2)
+C:\Users\anzuy\Project\ManteraStudio-ReadingCircle-DeepLearningFromScratch\source\sample\common\multi_layer_net_extend.py:101: RuntimeWarning: invalid value encountered in double_scalars
+  weight_decay += 0.5 * self.weight_decay_lambda * np.sum(W**2)
+c:\users\anzuy\project\manterastudio-readingcircle-deeplearningfromscratch\.venv\lib\site-packages\numpy\core\fromnumeric.py:87: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:1 | 0.097 - 0.097
+epoch:2 | 0.097 - 0.127
+epoch:3 | 0.097 - 0.18
+epoch:4 | 0.097 - 0.193
+epoch:5 | 0.097 - 0.212
+epoch:6 | 0.097 - 0.236
+epoch:7 | 0.097 - 0.259
+epoch:8 | 0.097 - 0.279
+epoch:9 | 0.097 - 0.296
+epoch:10 | 0.097 - 0.324
+epoch:11 | 0.097 - 0.352
+epoch:12 | 0.097 - 0.365
+epoch:13 | 0.097 - 0.38
+epoch:14 | 0.097 - 0.413
+epoch:15 | 0.097 - 0.431
+epoch:16 | 0.097 - 0.449
+epoch:17 | 0.097 - 0.468
+epoch:18 | 0.097 - 0.477
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.097 - 0.499
+============== 3/16 ==============
+epoch:0 | 0.144 - 0.09
+epoch:1 | 0.339 - 0.084
+epoch:2 | 0.503 - 0.121
+epoch:3 | 0.601 - 0.175
+epoch:4 | 0.701 - 0.204
+epoch:5 | 0.754 - 0.242
+epoch:6 | 0.811 - 0.278
+epoch:7 | 0.847 - 0.321
+epoch:8 | 0.882 - 0.345
+epoch:9 | 0.903 - 0.365
+epoch:10 | 0.927 - 0.391
+epoch:11 | 0.942 - 0.41
+epoch:12 | 0.956 - 0.449
+epoch:13 | 0.961 - 0.471
+epoch:14 | 0.968 - 0.491
+epoch:15 | 0.974 - 0.509
+epoch:16 | 0.98 - 0.529
+epoch:17 | 0.986 - 0.548
+epoch:18 | 0.988 - 0.557
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.991 - 0.576
+============== 4/16 ==============
+epoch:0 | 0.143 - 0.091
+epoch:1 | 0.318 - 0.115
+epoch:2 | 0.475 - 0.186
+epoch:3 | 0.577 - 0.291
+epoch:4 | 0.601 - 0.339
+epoch:5 | 0.648 - 0.398
+epoch:6 | 0.696 - 0.443
+epoch:7 | 0.703 - 0.501
+epoch:8 | 0.729 - 0.535
+epoch:9 | 0.755 - 0.588
+epoch:10 | 0.758 - 0.619
+epoch:11 | 0.782 - 0.649
+epoch:12 | 0.799 - 0.664
+epoch:13 | 0.816 - 0.696
+epoch:14 | 0.809 - 0.709
+epoch:15 | 0.821 - 0.725
+epoch:16 | 0.828 - 0.746
+epoch:17 | 0.84 - 0.765
+epoch:18 | 0.857 - 0.786
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.857 - 0.794
+============== 5/16 ==============
+epoch:0 | 0.089 - 0.113
+epoch:1 | 0.092 - 0.136
+epoch:2 | 0.095 - 0.256
+epoch:3 | 0.096 - 0.377
+epoch:4 | 0.1 - 0.491
+epoch:5 | 0.11 - 0.554
+epoch:6 | 0.111 - 0.623
+epoch:7 | 0.125 - 0.665
+epoch:8 | 0.133 - 0.704
+epoch:9 | 0.148 - 0.726
+epoch:10 | 0.16 - 0.754
+epoch:11 | 0.171 - 0.774
+epoch:12 | 0.178 - 0.797
+epoch:13 | 0.182 - 0.81
+epoch:14 | 0.194 - 0.828
+epoch:15 | 0.199 - 0.834
+epoch:16 | 0.191 - 0.836
+epoch:17 | 0.181 - 0.853
+epoch:18 | 0.177 - 0.864
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.176 - 0.874
+============== 6/16 ==============
+epoch:0 | 0.113 - 0.11
+epoch:1 | 0.169 - 0.155
+epoch:2 | 0.118 - 0.326
+epoch:3 | 0.12 - 0.55
+epoch:4 | 0.117 - 0.658
+epoch:5 | 0.127 - 0.717
+epoch:6 | 0.131 - 0.772
+epoch:7 | 0.117 - 0.791
+epoch:8 | 0.117 - 0.807
+epoch:9 | 0.117 - 0.823
+epoch:10 | 0.12 - 0.843
+epoch:11 | 0.117 - 0.866
+epoch:12 | 0.117 - 0.882
+epoch:13 | 0.117 - 0.896
+epoch:14 | 0.117 - 0.911
+epoch:15 | 0.117 - 0.916
+epoch:16 | 0.132 - 0.929
+epoch:17 | 0.158 - 0.938
+epoch:18 | 0.117 - 0.947
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.954
+============== 7/16 ==============
+epoch:0 | 0.117 - 0.089
+epoch:1 | 0.117 - 0.355
+epoch:2 | 0.116 - 0.588
+epoch:3 | 0.117 - 0.689
+epoch:4 | 0.117 - 0.754
+epoch:5 | 0.117 - 0.793
+epoch:6 | 0.117 - 0.837
+epoch:7 | 0.117 - 0.858
+epoch:8 | 0.117 - 0.883
+epoch:9 | 0.117 - 0.905
+epoch:10 | 0.116 - 0.921
+epoch:11 | 0.116 - 0.933
+epoch:12 | 0.116 - 0.949
+epoch:13 | 0.116 - 0.956
+epoch:14 | 0.116 - 0.968
+epoch:15 | 0.116 - 0.979
+epoch:16 | 0.116 - 0.981
+epoch:17 | 0.116 - 0.987
+epoch:18 | 0.116 - 0.987
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.989
+============== 8/16 ==============
+epoch:0 | 0.116 - 0.115
+epoch:1 | 0.116 - 0.46
+epoch:2 | 0.116 - 0.642
+epoch:3 | 0.116 - 0.763
+epoch:4 | 0.116 - 0.811
+epoch:5 | 0.116 - 0.845
+epoch:6 | 0.116 - 0.885
+epoch:7 | 0.116 - 0.924
+epoch:8 | 0.116 - 0.952
+epoch:9 | 0.116 - 0.965
+epoch:10 | 0.116 - 0.978
+epoch:11 | 0.116 - 0.983
+epoch:12 | 0.116 - 0.991
+epoch:13 | 0.116 - 0.992
+epoch:14 | 0.116 - 0.992
+epoch:15 | 0.116 - 0.995
+epoch:16 | 0.116 - 0.998
+epoch:17 | 0.116 - 0.998
+epoch:18 | 0.116 - 0.999
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.116 - 0.999
+============== 9/16 ==============
+epoch:0 | 0.094 - 0.172
+epoch:1 | 0.097 - 0.546
+epoch:2 | 0.099 - 0.648
+epoch:3 | 0.117 - 0.679
+epoch:4 | 0.117 - 0.725
+epoch:5 | 0.117 - 0.8
+epoch:6 | 0.117 - 0.863
+epoch:7 | 0.117 - 0.928
+epoch:8 | 0.117 - 0.965
+epoch:9 | 0.117 - 0.981
+epoch:10 | 0.117 - 0.987
+epoch:11 | 0.117 - 0.992
+epoch:12 | 0.117 - 0.996
+epoch:13 | 0.117 - 0.997
+epoch:14 | 0.117 - 0.996
+epoch:15 | 0.117 - 0.997
+epoch:16 | 0.117 - 0.998
+epoch:17 | 0.117 - 0.999
+epoch:18 | 0.117 - 0.999
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.999
+============== 10/16 ==============
+epoch:0 | 0.099 - 0.155
+epoch:1 | 0.116 - 0.648
+epoch:2 | 0.116 - 0.785
+epoch:3 | 0.117 - 0.793
+epoch:4 | 0.117 - 0.811
+epoch:5 | 0.116 - 0.877
+epoch:6 | 0.116 - 0.929
+epoch:7 | 0.116 - 0.968
+epoch:8 | 0.116 - 0.974
+epoch:9 | 0.117 - 0.958
+epoch:10 | 0.117 - 0.99
+epoch:11 | 0.117 - 0.991
+epoch:12 | 0.117 - 0.919
+epoch:13 | 0.117 - 0.992
+epoch:14 | 0.117 - 0.996
+epoch:15 | 0.117 - 0.997
+epoch:16 | 0.117 - 0.997
+epoch:17 | 0.117 - 0.997
+epoch:18 | 0.117 - 0.995
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.997
+============== 11/16 ==============
+epoch:0 | 0.117 - 0.099
+epoch:1 | 0.117 - 0.637
+epoch:2 | 0.117 - 0.635
+epoch:3 | 0.117 - 0.596
+epoch:4 | 0.117 - 0.772
+epoch:5 | 0.117 - 0.828
+epoch:6 | 0.117 - 0.85
+epoch:7 | 0.116 - 0.954
+epoch:8 | 0.116 - 0.971
+epoch:9 | 0.117 - 0.981
+epoch:10 | 0.117 - 0.984
+epoch:11 | 0.117 - 0.977
+epoch:12 | 0.116 - 0.99
+epoch:13 | 0.116 - 0.994
+epoch:14 | 0.116 - 0.987
+epoch:15 | 0.116 - 0.995
+epoch:16 | 0.116 - 0.995
+epoch:17 | 0.116 - 0.996
+epoch:18 | 0.116 - 0.991
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.116 - 0.997
+============== 12/16 ==============
+epoch:0 | 0.105 - 0.151
+epoch:1 | 0.117 - 0.579
+epoch:2 | 0.117 - 0.644
+epoch:3 | 0.116 - 0.754
+epoch:4 | 0.116 - 0.765
+epoch:5 | 0.116 - 0.648
+epoch:6 | 0.116 - 0.85
+epoch:7 | 0.116 - 0.872
+epoch:8 | 0.116 - 0.875
+epoch:9 | 0.117 - 0.885
+epoch:10 | 0.117 - 0.881
+epoch:11 | 0.116 - 0.973
+epoch:12 | 0.117 - 0.982
+epoch:13 | 0.117 - 0.985
+epoch:14 | 0.117 - 0.988
+epoch:15 | 0.117 - 0.985
+epoch:16 | 0.117 - 0.988
+epoch:17 | 0.117 - 0.987
+epoch:18 | 0.117 - 0.988
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.989
+============== 13/16 ==============
+epoch:0 | 0.105 - 0.103
+epoch:1 | 0.117 - 0.435
+epoch:2 | 0.117 - 0.541
+epoch:3 | 0.117 - 0.564
+epoch:4 | 0.117 - 0.664
+epoch:5 | 0.117 - 0.672
+epoch:6 | 0.117 - 0.676
+epoch:7 | 0.117 - 0.657
+epoch:8 | 0.116 - 0.706
+epoch:9 | 0.116 - 0.712
+epoch:10 | 0.116 - 0.709
+epoch:11 | 0.116 - 0.805
+epoch:12 | 0.116 - 0.782
+epoch:13 | 0.116 - 0.803
+epoch:14 | 0.117 - 0.804
+epoch:15 | 0.116 - 0.807
+epoch:16 | 0.117 - 0.811
+epoch:17 | 0.117 - 0.81
+epoch:18 | 0.117 - 0.81
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.805
+============== 14/16 ==============
+epoch:0 | 0.117 - 0.118
+epoch:1 | 0.117 - 0.298
+epoch:2 | 0.117 - 0.382
+epoch:3 | 0.117 - 0.484
+epoch:4 | 0.117 - 0.491
+epoch:5 | 0.117 - 0.488
+epoch:6 | 0.117 - 0.452
+epoch:7 | 0.117 - 0.503
+epoch:8 | 0.117 - 0.504
+epoch:9 | 0.117 - 0.493
+epoch:10 | 0.117 - 0.516
+epoch:11 | 0.117 - 0.514
+epoch:12 | 0.117 - 0.512
+epoch:13 | 0.117 - 0.513
+epoch:14 | 0.117 - 0.515
+epoch:15 | 0.117 - 0.572
+epoch:16 | 0.117 - 0.565
+epoch:17 | 0.117 - 0.577
+epoch:18 | 0.117 - 0.586
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.609
+============== 15/16 ==============
+epoch:0 | 0.097 - 0.097
+epoch:1 | 0.116 - 0.22
+epoch:2 | 0.116 - 0.383
+epoch:3 | 0.116 - 0.403
+epoch:4 | 0.116 - 0.425
+epoch:5 | 0.116 - 0.412
+epoch:6 | 0.116 - 0.418
+epoch:7 | 0.116 - 0.415
+epoch:8 | 0.116 - 0.429
+epoch:9 | 0.117 - 0.431
+epoch:10 | 0.117 - 0.432
+epoch:11 | 0.117 - 0.426
+epoch:12 | 0.117 - 0.431
+epoch:13 | 0.117 - 0.432
+epoch:14 | 0.117 - 0.431
+epoch:15 | 0.117 - 0.432
+epoch:16 | 0.117 - 0.433
+epoch:17 | 0.117 - 0.524
+epoch:18 | 0.117 - 0.51
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+No handles with labels found to put in legend.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:19 | 0.117 - 0.525
+============== 16/16 ==============
+epoch:0 | 0.087 - 0.125
+epoch:1 | 0.117 - 0.257
+epoch:2 | 0.117 - 0.305
+epoch:3 | 0.117 - 0.324
+epoch:4 | 0.117 - 0.325
+epoch:5 | 0.117 - 0.323
+epoch:6 | 0.117 - 0.324
+epoch:7 | 0.117 - 0.396
+epoch:8 | 0.117 - 0.396
+epoch:9 | 0.117 - 0.43
+epoch:10 | 0.117 - 0.43
+epoch:11 | 0.117 - 0.414
+epoch:12 | 0.117 - 0.429
+epoch:13 | 0.117 - 0.42
+epoch:14 | 0.117 - 0.431
+epoch:15 | 0.117 - 0.422
+epoch:16 | 0.117 - 0.428
+epoch:17 | 0.117 - 0.431
+epoch:18 | 0.117 - 0.413
+epoch:19 | 0.117 - 0.43
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/6.Chapter-6_3._Batch_Normalization_2_35.png" src="../_images/6.Chapter-6_3._Batch_Normalization_2_35.png" />
+</div>
+</div>
+<p>一部ではバッチノーマライズをしないほうが良いと出ているが、全体を見るとバッチノーマライゼーションを入れたほうが学習しているのがわかる。</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="4.%20Overtraining.html" class="btn btn-neutral float-right" title="7.2. 4. 正則化" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="7. ６章 学習に関するテクニック" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

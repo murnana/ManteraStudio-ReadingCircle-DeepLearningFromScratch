@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.2. 4. 正則化 &mdash; まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装 0.0.1 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="7.3. ハイパーパラメータの検証" href="Untitled.html" />
+    <link rel="prev" title="7.1. Batch Normalization" href="3.%20Batch%20Normalization.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../0.Intro/index.html">1. はじめに</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1.Chapter-1/index.html">2. 1章 Python入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2.Chapter-2/index.html">3. 2章 パーセプトロン</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../3.Chapter-3/index.html">4. 3章 ニューラルネットワーク</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4.Chapter-4/index.html">5. 4章 ニューラルネットワークの学習</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../5.Chapter-5/index.html">6. 5章 誤差伝搬法</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. ６章 学習に関するテクニック</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="3.%20Batch%20Normalization.html">7.1. Batch Normalization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.2. 4. 正則化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Weight-decay">7.2.1. Weight decay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Dropout">7.2.2. Dropout</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Untitled.html">7.3. ハイパーパラメータの検証</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../7.Chapter-7/index.html">8. 7章 畳み込みニューラルネットワーク</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">まんてらスタジオ輪読会 - ゼロから作るDeep Learning ――Pythonで学ぶディープラーニングの理論と実装</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">7. </span>６章 学習に関するテクニック</a> &raquo;</li>
+        
+      <li><span class="section-number">7.2. </span>4. 正則化</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/6.Chapter-6/4. Overtraining.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="4.-正則化">
+<h1><span class="section-number">7.2. </span>4. 正則化<a class="headerlink" href="#4.-正則化" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>過学習が起こるのは</p>
+<ul class="simple">
+<li><p>パラメータを大量に持ち、表現力の高いモデルである</p></li>
+<li><p>訓練データが少ない</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">dataset.mnist</span> <span class="kn">import</span> <span class="n">load_mnist</span>
+<span class="kn">from</span> <span class="nn">common.multi_layer_net</span> <span class="kn">import</span> <span class="n">MultiLayerNet</span>
+<span class="kn">from</span> <span class="nn">common.optimizer</span> <span class="kn">import</span> <span class="n">SGD</span>
+
+<span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">),</span> <span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">load_mnist</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 過学習を再現するために、学習データを削減</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[:</span><span class="mi">300</span><span class="p">]</span>
+<span class="n">t_train</span> <span class="o">=</span> <span class="n">t_train</span><span class="p">[:</span><span class="mi">300</span><span class="p">]</span>
+
+<span class="c1"># weight decay（荷重減衰）の設定 =======================</span>
+<span class="c1">#weight_decay_lambda = 0 # weight decayを使用しない場合</span>
+<span class="n">weight_decay_lambda</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="c1"># ====================================================</span>
+
+<span class="n">network</span> <span class="o">=</span> <span class="n">MultiLayerNet</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">hidden_size_list</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                        <span class="n">weight_decay_lambda</span><span class="o">=</span><span class="n">weight_decay_lambda</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">max_epochs</span> <span class="o">=</span> <span class="mi">201</span>
+<span class="n">train_size</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">train_loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">test_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">iter_per_epoch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">train_size</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">epoch_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000000</span><span class="p">):</span>
+    <span class="n">batch_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">train_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">x_batch</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">[</span><span class="n">batch_mask</span><span class="p">]</span>
+    <span class="n">t_batch</span> <span class="o">=</span> <span class="n">t_train</span><span class="p">[</span><span class="n">batch_mask</span><span class="p">]</span>
+
+    <span class="n">grads</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">x_batch</span><span class="p">,</span> <span class="n">t_batch</span><span class="p">)</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">grads</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">iter_per_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">train_acc</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">t_train</span><span class="p">)</span>
+        <span class="n">test_acc</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">t_test</span><span class="p">)</span>
+        <span class="n">train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span>
+        <span class="n">test_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_acc</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">epoch_cnt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, train acc:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, test acc:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">test_acc</span><span class="p">))</span>
+
+        <span class="n">epoch_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">epoch_cnt</span> <span class="o">&gt;=</span> <span class="n">max_epochs</span><span class="p">:</span>
+            <span class="k">break</span>
+
+
+<span class="c1"># 3.グラフの描画==========</span>
+<span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">}</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">test_acc_list</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">markevery</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;epochs&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+epoch:0, train acc:0.09333333333333334, test acc:0.1056
+epoch:1, train acc:0.10666666666666667, test acc:0.1176
+epoch:2, train acc:0.16, test acc:0.1435
+epoch:3, train acc:0.19, test acc:0.1634
+epoch:4, train acc:0.22666666666666666, test acc:0.1913
+epoch:5, train acc:0.23333333333333334, test acc:0.2093
+epoch:6, train acc:0.24, test acc:0.2246
+epoch:7, train acc:0.25333333333333335, test acc:0.2352
+epoch:8, train acc:0.27, test acc:0.2472
+epoch:9, train acc:0.28, test acc:0.2553
+epoch:10, train acc:0.29, test acc:0.2679
+epoch:11, train acc:0.31666666666666665, test acc:0.2784
+epoch:12, train acc:0.33666666666666667, test acc:0.2893
+epoch:13, train acc:0.36, test acc:0.3046
+epoch:14, train acc:0.36333333333333334, test acc:0.3098
+epoch:15, train acc:0.38333333333333336, test acc:0.322
+epoch:16, train acc:0.4033333333333333, test acc:0.3384
+epoch:17, train acc:0.41, test acc:0.3432
+epoch:18, train acc:0.43, test acc:0.3521
+epoch:19, train acc:0.44333333333333336, test acc:0.3763
+epoch:20, train acc:0.4766666666666667, test acc:0.3891
+epoch:21, train acc:0.5066666666666667, test acc:0.4154
+epoch:22, train acc:0.5166666666666667, test acc:0.4245
+epoch:23, train acc:0.5433333333333333, test acc:0.4426
+epoch:24, train acc:0.56, test acc:0.4539
+epoch:25, train acc:0.5766666666666667, test acc:0.4681
+epoch:26, train acc:0.5733333333333334, test acc:0.4782
+epoch:27, train acc:0.58, test acc:0.479
+epoch:28, train acc:0.59, test acc:0.4971
+epoch:29, train acc:0.6133333333333333, test acc:0.5048
+epoch:30, train acc:0.6133333333333333, test acc:0.5123
+epoch:31, train acc:0.6233333333333333, test acc:0.5178
+epoch:32, train acc:0.6133333333333333, test acc:0.5173
+epoch:33, train acc:0.6233333333333333, test acc:0.525
+epoch:34, train acc:0.63, test acc:0.5387
+epoch:35, train acc:0.6266666666666667, test acc:0.5391
+epoch:36, train acc:0.6566666666666666, test acc:0.5502
+epoch:37, train acc:0.64, test acc:0.5461
+epoch:38, train acc:0.6766666666666666, test acc:0.5576
+epoch:39, train acc:0.7033333333333334, test acc:0.5734
+epoch:40, train acc:0.7166666666666667, test acc:0.5826
+epoch:41, train acc:0.73, test acc:0.5899
+epoch:42, train acc:0.73, test acc:0.5888
+epoch:43, train acc:0.7333333333333333, test acc:0.5837
+epoch:44, train acc:0.7366666666666667, test acc:0.5961
+epoch:45, train acc:0.75, test acc:0.5948
+epoch:46, train acc:0.75, test acc:0.5988
+epoch:47, train acc:0.7533333333333333, test acc:0.5995
+epoch:48, train acc:0.75, test acc:0.5963
+epoch:49, train acc:0.7566666666666667, test acc:0.6032
+epoch:50, train acc:0.74, test acc:0.6085
+epoch:51, train acc:0.7466666666666667, test acc:0.6066
+epoch:52, train acc:0.7466666666666667, test acc:0.6071
+epoch:53, train acc:0.7466666666666667, test acc:0.6031
+epoch:54, train acc:0.7466666666666667, test acc:0.6062
+epoch:55, train acc:0.7633333333333333, test acc:0.6192
+epoch:56, train acc:0.7633333333333333, test acc:0.6096
+epoch:57, train acc:0.7633333333333333, test acc:0.611
+epoch:58, train acc:0.77, test acc:0.6273
+epoch:59, train acc:0.7833333333333333, test acc:0.622
+epoch:60, train acc:0.7866666666666666, test acc:0.6271
+epoch:61, train acc:0.78, test acc:0.6324
+epoch:62, train acc:0.7766666666666666, test acc:0.6379
+epoch:63, train acc:0.78, test acc:0.6342
+epoch:64, train acc:0.7866666666666666, test acc:0.6417
+epoch:65, train acc:0.7933333333333333, test acc:0.6449
+epoch:66, train acc:0.8, test acc:0.6452
+epoch:67, train acc:0.8, test acc:0.6521
+epoch:68, train acc:0.7966666666666666, test acc:0.6393
+epoch:69, train acc:0.8, test acc:0.6382
+epoch:70, train acc:0.78, test acc:0.6444
+epoch:71, train acc:0.78, test acc:0.6461
+epoch:72, train acc:0.78, test acc:0.6451
+epoch:73, train acc:0.7833333333333333, test acc:0.6578
+epoch:74, train acc:0.8133333333333334, test acc:0.6643
+epoch:75, train acc:0.8033333333333333, test acc:0.6597
+epoch:76, train acc:0.8133333333333334, test acc:0.6635
+epoch:77, train acc:0.8133333333333334, test acc:0.6614
+epoch:78, train acc:0.81, test acc:0.6584
+epoch:79, train acc:0.82, test acc:0.657
+epoch:80, train acc:0.81, test acc:0.6598
+epoch:81, train acc:0.8133333333333334, test acc:0.6648
+epoch:82, train acc:0.8166666666666667, test acc:0.6698
+epoch:83, train acc:0.8166666666666667, test acc:0.673
+epoch:84, train acc:0.81, test acc:0.6522
+epoch:85, train acc:0.8166666666666667, test acc:0.6637
+epoch:86, train acc:0.8133333333333334, test acc:0.6721
+epoch:87, train acc:0.8066666666666666, test acc:0.6643
+epoch:88, train acc:0.8166666666666667, test acc:0.6562
+epoch:89, train acc:0.8266666666666667, test acc:0.6758
+epoch:90, train acc:0.8066666666666666, test acc:0.6624
+epoch:91, train acc:0.82, test acc:0.6743
+epoch:92, train acc:0.8033333333333333, test acc:0.6687
+epoch:93, train acc:0.8233333333333334, test acc:0.6741
+epoch:94, train acc:0.8466666666666667, test acc:0.6755
+epoch:95, train acc:0.8233333333333334, test acc:0.6743
+epoch:96, train acc:0.82, test acc:0.6528
+epoch:97, train acc:0.81, test acc:0.6727
+epoch:98, train acc:0.8266666666666667, test acc:0.6764
+epoch:99, train acc:0.8333333333333334, test acc:0.6712
+epoch:100, train acc:0.8133333333333334, test acc:0.6769
+epoch:101, train acc:0.8266666666666667, test acc:0.6769
+epoch:102, train acc:0.8233333333333334, test acc:0.6692
+epoch:103, train acc:0.8266666666666667, test acc:0.6814
+epoch:104, train acc:0.84, test acc:0.6827
+epoch:105, train acc:0.8366666666666667, test acc:0.6943
+epoch:106, train acc:0.8333333333333334, test acc:0.6793
+epoch:107, train acc:0.8333333333333334, test acc:0.6873
+epoch:108, train acc:0.8633333333333333, test acc:0.6901
+epoch:109, train acc:0.8433333333333334, test acc:0.6907
+epoch:110, train acc:0.84, test acc:0.6754
+epoch:111, train acc:0.82, test acc:0.6733
+epoch:112, train acc:0.83, test acc:0.6839
+epoch:113, train acc:0.8233333333333334, test acc:0.6786
+epoch:114, train acc:0.8266666666666667, test acc:0.6848
+epoch:115, train acc:0.83, test acc:0.6854
+epoch:116, train acc:0.8366666666666667, test acc:0.6931
+epoch:117, train acc:0.83, test acc:0.6771
+epoch:118, train acc:0.8333333333333334, test acc:0.6859
+epoch:119, train acc:0.8133333333333334, test acc:0.6627
+epoch:120, train acc:0.83, test acc:0.6808
+epoch:121, train acc:0.8433333333333334, test acc:0.6868
+epoch:122, train acc:0.8533333333333334, test acc:0.6952
+epoch:123, train acc:0.85, test acc:0.6834
+epoch:124, train acc:0.86, test acc:0.6888
+epoch:125, train acc:0.8466666666666667, test acc:0.6888
+epoch:126, train acc:0.8333333333333334, test acc:0.6753
+epoch:127, train acc:0.85, test acc:0.6877
+epoch:128, train acc:0.85, test acc:0.6861
+epoch:129, train acc:0.8566666666666667, test acc:0.6903
+epoch:130, train acc:0.89, test acc:0.6969
+epoch:131, train acc:0.8633333333333333, test acc:0.6727
+epoch:132, train acc:0.8666666666666667, test acc:0.6894
+epoch:133, train acc:0.8433333333333334, test acc:0.6854
+epoch:134, train acc:0.8533333333333334, test acc:0.688
+epoch:135, train acc:0.87, test acc:0.6916
+epoch:136, train acc:0.8466666666666667, test acc:0.6756
+epoch:137, train acc:0.88, test acc:0.697
+epoch:138, train acc:0.86, test acc:0.6944
+epoch:139, train acc:0.8533333333333334, test acc:0.6936
+epoch:140, train acc:0.8833333333333333, test acc:0.6931
+epoch:141, train acc:0.8733333333333333, test acc:0.6955
+epoch:142, train acc:0.86, test acc:0.6574
+epoch:143, train acc:0.8966666666666666, test acc:0.7088
+epoch:144, train acc:0.8833333333333333, test acc:0.7009
+epoch:145, train acc:0.88, test acc:0.6973
+epoch:146, train acc:0.88, test acc:0.6999
+epoch:147, train acc:0.89, test acc:0.6995
+epoch:148, train acc:0.89, test acc:0.6978
+epoch:149, train acc:0.8966666666666666, test acc:0.6997
+epoch:150, train acc:0.8766666666666667, test acc:0.6923
+epoch:151, train acc:0.87, test acc:0.6959
+epoch:152, train acc:0.8733333333333333, test acc:0.6889
+epoch:153, train acc:0.8566666666666667, test acc:0.6771
+epoch:154, train acc:0.8766666666666667, test acc:0.6942
+epoch:155, train acc:0.8633333333333333, test acc:0.694
+epoch:156, train acc:0.8866666666666667, test acc:0.6994
+epoch:157, train acc:0.88, test acc:0.7074
+epoch:158, train acc:0.8766666666666667, test acc:0.6934
+epoch:159, train acc:0.89, test acc:0.6965
+epoch:160, train acc:0.88, test acc:0.6968
+epoch:161, train acc:0.9, test acc:0.7069
+epoch:162, train acc:0.8833333333333333, test acc:0.691
+epoch:163, train acc:0.8966666666666666, test acc:0.7051
+epoch:164, train acc:0.87, test acc:0.6845
+epoch:165, train acc:0.8833333333333333, test acc:0.7016
+epoch:166, train acc:0.8933333333333333, test acc:0.7031
+epoch:167, train acc:0.8866666666666667, test acc:0.7043
+epoch:168, train acc:0.87, test acc:0.6842
+epoch:169, train acc:0.8833333333333333, test acc:0.6896
+epoch:170, train acc:0.88, test acc:0.6934
+epoch:171, train acc:0.87, test acc:0.6929
+epoch:172, train acc:0.8833333333333333, test acc:0.6925
+epoch:173, train acc:0.8966666666666666, test acc:0.696
+epoch:174, train acc:0.9033333333333333, test acc:0.7032
+epoch:175, train acc:0.8733333333333333, test acc:0.6969
+epoch:176, train acc:0.8766666666666667, test acc:0.7053
+epoch:177, train acc:0.8666666666666667, test acc:0.694
+epoch:178, train acc:0.8833333333333333, test acc:0.7007
+epoch:179, train acc:0.8966666666666666, test acc:0.7052
+epoch:180, train acc:0.9, test acc:0.7059
+epoch:181, train acc:0.89, test acc:0.7026
+epoch:182, train acc:0.8866666666666667, test acc:0.6923
+epoch:183, train acc:0.8966666666666666, test acc:0.704
+epoch:184, train acc:0.89, test acc:0.703
+epoch:185, train acc:0.8966666666666666, test acc:0.699
+epoch:186, train acc:0.9, test acc:0.7086
+epoch:187, train acc:0.8866666666666667, test acc:0.6983
+epoch:188, train acc:0.8933333333333333, test acc:0.7023
+epoch:189, train acc:0.8933333333333333, test acc:0.7025
+epoch:190, train acc:0.8866666666666667, test acc:0.6975
+epoch:191, train acc:0.8933333333333333, test acc:0.6798
+epoch:192, train acc:0.89, test acc:0.6974
+epoch:193, train acc:0.8966666666666666, test acc:0.7055
+epoch:194, train acc:0.9, test acc:0.7001
+epoch:195, train acc:0.8966666666666666, test acc:0.7021
+epoch:196, train acc:0.8933333333333333, test acc:0.7025
+epoch:197, train acc:0.8966666666666666, test acc:0.7062
+epoch:198, train acc:0.88, test acc:0.7079
+epoch:199, train acc:0.88, test acc:0.7059
+epoch:200, train acc:0.8933333333333333, test acc:0.7025
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/6.Chapter-6_4._Overtraining_2_1.png" src="../_images/6.Chapter-6_4._Overtraining_2_1.png" />
+</div>
+</div>
+<p>訓練データはほぼほぼ正解に近いが、テストデータの結果が良くない状態。</p>
+<div class="section" id="Weight-decay">
+<h2><span class="section-number">7.2.1. </span>Weight decay<a class="headerlink" href="#Weight-decay" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>バカでっかい値</p>
+<p>特定のニューロンの重みが大きいとき、そのウェイトを小さくする。 具体的には、ラムダプライムというペナルティを与える。</p>
+<p>L2のむる (重みの2乗)を損失関数に与えることで、重みが大きくなるのを抑える。</p>
+<p>ノルム = ベクトルの大きさのようなもの。 ノルムを計算することで、重みデータがとれる範囲を制限している</p>
+</div>
+<div class="section" id="Dropout">
+<h2><span class="section-number">7.2.2. </span>Dropout<a class="headerlink" href="#Dropout" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>複雑なニューロンの一部を使わなくする。</p>
+<p>計算後にDropout率をかける。例えば出力時。</p>
+<p>テスト時はDropoutさせないが、ドロップアウトさせたときと同じスケールになるような計算を入れる。 Dropoutするニューロンはランダムなので、どれがDropoutになるかはわからない。</p>
+<p>Dropout率は、だいたい0.3~0.5くらいにすることが多い。 あんまり大きいと、使っていないのと同義になるので大きくすることはない。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Untitled.html" class="btn btn-neutral float-right" title="7.3. ハイパーパラメータの検証" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="3.%20Batch%20Normalization.html" class="btn btn-neutral float-left" title="7.1. Batch Normalization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, murnana
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
